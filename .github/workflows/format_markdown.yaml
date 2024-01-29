@@ -25,7 +25,7 @@ jobs:
 
       - name: Install dependencies and format files
         run: |
-          sudo apt-get install -y dos2unix curl vim git npm tree
+          sudo apt-get install -y dos2unix curl vim git npm tree gifsicle
           curl -sSL https://git.io/JcGER | /bin/bash
           npm install -g markdownlint-cli2
           find . -name "*.md" -exec dos2unix {} + -o -name "*.json" -exec dos2unix {} +
@@ -34,7 +34,11 @@ jobs:
         run: |
           /bin/bash .github/script/find_sed_cleanup.sh
           autocorrect --fix
-  
+
+      - name: Install dependencies and format files
+        run: |
+          find . -name "*.gif" -type f -exec sh -c 'for gif; do gifsicle -O3 "$gif" --colors 256 -o "${gif}.1.gif" && rm -rf "$gif" && mv "${gif}.1.gif" "$gif"; done' sh {} +
+
       # - name: Format markdown files
       #   run: |
       #     ls -la
