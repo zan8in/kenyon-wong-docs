@@ -46,6 +46,7 @@ jobs:
       #     markdownlint-cli2 --config ".github/.markdownlint.yaml" --fix "**/*.md" "#.git" "#.github" 
 
       - name: Compress images
+        if: github.event.pull_request.head.repo.full_name == github.repository && !github.event.pull_request.draft && github.event.pull_request.commits[0].author.login == 'GitHub Action'
         uses: calibreapp/image-actions@main
         with:
           githubToken: ${{ secrets.DOCS_PUSH_TOKEN }}
