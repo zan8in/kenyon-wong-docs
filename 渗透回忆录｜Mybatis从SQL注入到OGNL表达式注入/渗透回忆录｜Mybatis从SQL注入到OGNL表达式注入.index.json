@@ -2,16 +2,16 @@
   "version": "2.0",
   "clipId": "1706513706",
   "format": "md",
-  "title": "渗透回忆录｜Mybatis从SQL注入到OGNL表达式注入",
+  "title": "渗透回忆录｜Mybatis 从 SQL 注入到 OGNL 表达式注入",
   "link": "https://mp.weixin.qq.com/s/fRbzLyGSqu7wtB9Bcpq1mg",
   "category": "default",
   "tags": [
     "mp.weixin.qq.com"
   ],
   "created_at": "2024-01-29 15:35:06",
-  "mainPath": "渗透回忆录｜Mybatis从SQL注入到OGNL表达式注入.md",
+  "mainPath": "渗透回忆录｜Mybatis 从 SQL 注入到 OGNL 表达式注入.md",
   "paths": [
-    "渗透回忆录｜Mybatis从SQL注入到OGNL表达式注入.index.json",
+    "渗透回忆录｜Mybatis 从 SQL 注入到 OGNL 表达式注入.index.json",
     "assets/1706513706-5978ee2b8d006c656dd91fee433f7fdf.png",
     "assets/1706513706-f27e61454c5a7dc35905279757dd195b.png",
     "assets/1706513706-1253fd6cf06c4c0ce0d9e65a5776898a.png",
@@ -40,6 +40,6 @@
     "assets/1706513706-b2383fe6c22ef7708de92fbb2b9c52c8.png",
     "assets/1706513706-76acd52a8bc81368731d159c5c5ff89d.png",
     "assets/1706513706-3a8c641c7a4c00e35e5053442ed25394.png",
-    "渗透回忆录｜Mybatis从SQL注入到OGNL表达式注入.md"
+    "渗透回忆录｜Mybatis 从 SQL 注入到 OGNL 表达式注入.md"
   ]
 }

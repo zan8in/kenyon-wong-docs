@@ -2,16 +2,16 @@
   "version": "2.0",
   "clipId": "1706513322",
   "format": "md",
-  "title": "中国全网DNS错误数据分析",
+  "title": "中国全网 DNS 错误数据分析",
   "link": "https://blog.xlab.qianxin.com/zhong-guo-quan-wang-cuo-wu-shu-ju-fen-xi/",
   "category": "default",
   "tags": [
     "blog.xlab.qianxin.com"
   ],
   "created_at": "2024-01-29 15:28:42",
-  "mainPath": "中国全网DNS错误数据分析.md",
+  "mainPath": "中国全网 DNS 错误数据分析.md",
   "paths": [
-    "中国全网DNS错误数据分析.index.json",
+    "中国全网 DNS 错误数据分析.index.json",
     "assets/1706513322-034d808a8c7a0ed66eb33ccdb181aa03.png",
     "assets/1706513322-1f2f4aed4408726e0c3598e73a86a69a.png",
     "assets/1706513322-398b20534655264561d032e9eee19e73.png",
@@ -40,6 +40,6 @@
     "assets/1706513322-4d1ab688f624889c10dee57304d17e20.png",
     "assets/1706513322-90ec56c7632a53068c55751a64b066d1.png",
     "assets/1706513322-26b3fe251118d1c375a3f4245bf29637.png",
-    "中国全网DNS错误数据分析.md"
+    "中国全网 DNS 错误数据分析.md"
   ]
 }
