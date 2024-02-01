@@ -8,7 +8,7 @@
 
 ## 聊聊什么是 Beacon
 
-Beacon 是 Cobalt Strike 运行在目标主机上的 Payload ，我们可以将它视为 “窃听器” ，可以配合各种方式（可执行文件、Word 文档、目标主机上的漏洞）最终组成一个我们熟悉的名词 —— 木马，最终送达到目标主机上，长期的控制它
+Beacon 是 Cobalt Strike 运行在目标主机上的 Payload，我们可以将它视为“窃听器” ，可以配合各种方式（可执行文件、Word 文档、目标主机上的漏洞）最终组成一个我们熟悉的名词 —— 木马，最终送达到目标主机上，长期的控制它
 
 [![](assets/1706771760-432a95b6c02e87a2d2fcd20be5993466.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129141052-27dcc808-be6d-1.png)
 
@@ -47,7 +47,7 @@ Beacon 的通信分为以下两种：
 -   TCP Beacon  
     \### HTTP Beacon 和 HTTPS Beacon
 
-HTTP Beacon 与 HTTPS Beacon 的差别仅仅是在通信协议上的不同，相比 HTTP Beacon ，HTTPS Beacon 多了 SSL/TLS 协议，可以保证数据传输中信息不被截取或发生中间人攻击等
+HTTP Beacon 与 HTTPS Beacon 的差别仅仅是在通信协议上的不同，相比 HTTP Beacon，HTTPS Beacon 多了 SSL/TLS 协议，可以保证数据传输中信息不被截取或发生中间人攻击等
 
 > **传输层安全性协议**（英语：**T**ransport **L**ayer **S**ecurity，缩写：**TLS**）前身称为**安全套接层**（英语：**S**ecure **S**ockets **L**ayer，缩写：**SSL**）是一种安全协议，目的是为互联网通信提供安全及数据完整性保障，可以将 TLS 看作 SSL 的加强版本
 
@@ -69,7 +69,7 @@ HTTP(S) beancon ->> Teamserver:HTTP(S)-Post
 
 #### Windows 命名管道（Name Pipe）
 
-在介绍 SMB Beacon 前，Windows 命名管道是我们必不可少的前置知识储备，因 Cobalt Strike 原生仅支持 Windows ，我们这里只介绍 Windows 的管道技术
+在介绍 SMB Beacon 前，Windows 命名管道是我们必不可少的前置知识储备，因 Cobalt Strike 原生仅支持 Windows，我们这里只介绍 Windows 的管道技术
 
 命名管道，顾名思义，就像是数字世界中的孪生兄弟，与我们日常生活中看到的管道有着相似的概念。一个管道具有两端，一段负责向管道写入数据，另一端负责从管道读取数据，在 Windows 中存在两种管道，即命名管道和匿名管道，具体特性如下：
 
@@ -84,7 +84,7 @@ HTTP(S) beancon ->> Teamserver:HTTP(S)-Post
 
 SMB 协议和 Windows 命名管道的关系可以类比成交通规则和交通路网，Windows 命名管道相当于一条条点对点的公路，但是单有交通路网是无法进行交通运输的，有了交通规则，即 SMB 协议才可以实现数据的传输
 
-SMB 全称是 Server Message Block，该协议最初由微软开发，用于在Windows系统中实现文件和打印机共享，后来被广泛用于其他操作系统和网络设备中，我们常用的内网目录共享有些就是通过 SMB 协议实现的
+SMB 全称是 Server Message Block，该协议最初由微软开发，用于在 Windows 系统中实现文件和打印机共享，后来被广泛用于其他操作系统和网络设备中，我们常用的内网目录共享有些就是通过 SMB 协议实现的
 
 [![](assets/1706771760-40deada9b54f07092e706d8196ff777f.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129141352-92ec277e-be6d-1.png)
 
@@ -96,28 +96,28 @@ SMB Beacon 一般在面对域渗透有机器不出网的场景使用率较高，
 
 ##### 隐蔽点对点通信（Beacon Covert Peer-to-Peer Communication）
 
-使用 `link [host] [pipe]` 命令可以使一个当前的正在控制的 Beacon 连接到等待连接的 SMB Beacon ，连接后现有 Beacon 和 SMB Beacon 的操作将会同步（更多操作会在操作篇详细说明）
+使用 `link [host] [pipe]` 命令可以使一个当前的正在控制的 Beacon 连接到等待连接的 SMB Beacon，连接后现有 Beacon 和 SMB Beacon 的操作将会同步（更多操作会在操作篇详细说明）
 
 如此图展示，当机器 2 无法直接与 Teamserver 通信时，便可使用 SMB Beacon 来带出机器权限
 
 ```plain
 sequenceDiagram
 
-Teamserver --> 机器1（HTTP/DNS Beacon）:可通信
+Teamserver --> 机器 1（HTTP/DNS Beacon）:可通信
 
-机器1（HTTP/DNS Beacon） --> 机器2（SMB Beacon）:可通信
+机器 1（HTTP/DNS Beacon） --> 机器 2（SMB Beacon）:可通信
 
-机器2（SMB Beacon） --> Teamserver:不可通信
+机器 2（SMB Beacon） --> Teamserver:不可通信
 
-机器2（SMB Beacon） --> 机器1（HTTP/DNS Beacon）:可通信（SMB Beacon）
+机器 2（SMB Beacon） --> 机器 1（HTTP/DNS Beacon）:可通信（SMB Beacon）
 
-机器1（HTTP/DNS Beacon） --> Teamserver:可通信（SMB Beacon）
+机器 1（HTTP/DNS Beacon） --> Teamserver:可通信（SMB Beacon）
 ```
 
 注：
 
 -   目标机器必须开启 445 端口才可使用 SMB Beacon
--   如果需要手动运行 SMB Beacon ，需要从一个父级 Beacon 连接到它，并且这两个 Beacon 需要属于同一 Cobalt Strike 主体
+-   如果需要手动运行 SMB Beacon，需要从一个父级 Beacon 连接到它，并且这两个 Beacon 需要属于同一 Cobalt Strike 主体
 -   一旦 Beacon 使用了这种连接方式，无法再使用 DNS 或 HTTP 协议进行通信
 -   SMB Beacon 同一时间只能连接一个父 Beacon，切换父 Beacon 的时候需要在原 Beacon 上先执行一次 unlink 操作
 -   取消连接 SMB Beacon 时，它并不会使它消失，而是进入等待连接状态
@@ -154,8 +154,8 @@ DNS Beacon 同时利用了这两种查询方式，详细过程见下图：
 
 DNS Beacon 支持以下三种 DNS 记录通道：
 
--   A 记录（mode dns）：A记录是最常见的DNS记录形式，一个A记录指向一个网站或域名的IP地址
--   AAAA 记录（mode dns6）：AAAA记录是IPv6协议的一部分，这意味着它们被用来为互联网上的主机分配IPv6地址
+-   A 记录（mode dns）：A 记录是最常见的 DNS 记录形式，一个 A 记录指向一个网站或域名的 IP 地址
+-   AAAA 记录（mode dns6）：AAAA 记录是 IPv6 协议的一部分，这意味着它们被用来为互联网上的主机分配 IPv6 地址
 -   TXT 记录（mode dns-txt）：允许你以文本格式添加关于你的域名的额外信息，是 DNS Beacon 的默认传递方式
 
 DNS Beacon 与 HTTP(S) Beacon 最大的区别是心跳时不会主动回传被控端的数据，仅有一个最后通联时间返回，使用 Beacon 控制台输入`checkin`可使心跳时返回数据，但如果通过 DNS Beacon 对受控主机执行命令时则会自动执行`checkin`返回数据
@@ -171,9 +171,9 @@ DNS Beacon 与 HTTP(S) Beacon 最大的区别是心跳时不会主动回传被�
 
 Socket 是个略微抽象的概念，大家可以把 Socket 理解为我们生活中的快递驿站，假设快递公司只知道每个包裹的驿站地址，而驿站负责将包裹再次配送到每家每户
 
-为什么需要Socket进行网络通信？当操作系统接收到一个数据包的时候，如果只有IP地址（驿站地址），它没法判断应该发给哪个应用程序，所以，操作系统抽象出 Socket 接口（快递驿站），每个应用程序需要各自对应到不同的 Socket，数据包才能根据 Socket 正确地发到对应的应用程序
+为什么需要 Socket 进行网络通信？当操作系统接收到一个数据包的时候，如果只有 IP 地址（驿站地址），它没法判断应该发给哪个应用程序，所以，操作系统抽象出 Socket 接口（快递驿站），每个应用程序需要各自对应到不同的 Socket，数据包才能根据 Socket 正确地发到对应的应用程序
 
-一个 Socket 就是由 IP 地址和端口号（范围是0～65535）组成，可以把 Socket 简单理解为 IP 地址加端口号，端口号总是由操作系统分配，它是一个0～65535之间的数字，其中小于1024的端口属于特权端口，需要管理员权限，大于1024的端口可以由任意用户的应用程序打开
+一个 Socket 就是由 IP 地址和端口号（范围是 0～65535）组成，可以把 Socket 简单理解为 IP 地址加端口号，端口号总是由操作系统分配，它是一个 0～65535 之间的数字，其中小于 1024 的端口属于特权端口，需要管理员权限，大于 1024 的端口可以由任意用户的应用程序打开
 
 当使用 Socket 连接后：
 

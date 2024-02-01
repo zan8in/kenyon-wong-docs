@@ -2,16 +2,16 @@
   "version": "2.0",
   "clipId": "1706771279",
   "format": "md",
-  "title": "一次office样本漏洞分析 - 先知社区",
+  "title": "一次 office 样本漏洞分析 - 先知社区",
   "link": "https://xz.aliyun.com/t/13477",
   "category": "default",
   "tags": [
     "xz.aliyun.com"
   ],
   "created_at": "2024-02-01 15:07:59",
-  "mainPath": "一次office样本漏洞分析-先知社区.md",
+  "mainPath": "一次 office 样本漏洞分析 - 先知社区.md",
   "paths": [
-    "一次office样本漏洞分析-先知社区.index.json",
+    "一次 office 样本漏洞分析 - 先知社区.index.json",
     "assets/1706771279-a4ca308f3c689b2acbe196565dbee59c.png",
     "assets/1706771279-83ca36b66be610d609056c9d57d20365.png",
     "assets/1706771279-4ead9b02a962e66febe12951c65c8e6a.png",
@@ -46,6 +46,6 @@
     "assets/1706771279-51c6217cd20a552fcfdf5a0bd1a40983.png",
     "assets/1706771279-37b7949cef601722beb50de928b1ef6e.png",
     "assets/1706771279-68b002fefea664c32e6dbb5e3ed05356.png",
-    "一次office样本漏洞分析-先知社区.md"
+    "一次 office 样本漏洞分析 - 先知社区.md"
   ]
 }

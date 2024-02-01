@@ -10,13 +10,13 @@ Real World CTF Corrupted GI Writeup
 
 ### 背景
 
-题目的出题灵感来源于笔者在对某大规模部署产品进行分析时发现的一个较难利用的堆漏洞。在完成完整利用的过程中，笔者第一次在实战场景组合使用了一些CTF赛题中用到的堆利用技巧。本篇文章会以题目writeup的形式介绍该漏洞的成因及利用技巧。感谢@M4x实现题目相关代码。
+题目的出题灵感来源于笔者在对某大规模部署产品进行分析时发现的一个较难利用的堆漏洞。在完成完整利用的过程中，笔者第一次在实战场景组合使用了一些 CTF 赛题中用到的堆利用技巧。本篇文章会以题目 writeup 的形式介绍该漏洞的成因及利用技巧。感谢@M4x 实现题目相关代码。
 
 [题目信息](https://github.com/chaitin/Real-World-CTF-6th-Challenges/tree/main/Corrupted%20GI)
 
 ### 漏洞成因
 
-该漏洞存在于一个开源项目 [`cJSON`](https://github.com/DaveGamble/cJSON) 中。在较早版本的`cJSON`代码中，解析json中的字符串时会通过以下函数实现：
+该漏洞存在于一个开源项目 [`cJSON`](https://github.com/DaveGamble/cJSON) 中。在较早版本的`cJSON`代码中，解析 json 中的字符串时会通过以下函数实现：
 
 ```plain
 static const char *parse_string(cJSON *item,const char *str)
@@ -73,16 +73,16 @@ static const char *parse_string(cJSON *item,const char *str)
 -   2 申请内存
 -   3 将字符写入内存（如果需要解码则进行解码）
 
-而在解码过程中，当遇到`'\u'`时，最终会执行`ptr+=4`。如果`ptr+4` 跳过的字节里，恰好有第一步计算长度时找到的第二个`"`，这时就可以产生一个堆溢出。攻击者在可以输入任意json字符串的情况下可以轻松的控制申请的内存大小及溢出的长度。
+而在解码过程中，当遇到`'\u'`时，最终会执行`ptr+=4`。如果`ptr+4` 跳过的字节里，恰好有第一步计算长度时找到的第二个`"`，这时就可以产生一个堆溢出。攻击者在可以输入任意 json 字符串的情况下可以轻松的控制申请的内存大小及溢出的长度。
 
 ### 漏洞利用
 
 完成利用主要有以下几个难点：
 
--   需要绕过waf过滤（我们模拟了实际场景中存在的waf场景）
--   在解析json的过程中没有free，且不存在堆上可用的内存指针或函数指针
+-   需要绕过 waf 过滤（我们模拟了实际场景中存在的 waf 场景）
+-   在解析 json 的过程中没有 free，且不存在堆上可用的内存指针或函数指针
 
-第一点带来的主要问题是payload的长度是有限制的，攻击者需要使用较短的payload申请大量堆内存，为后续利用做准备。通过逆向或者阅读cjson的代码可以发现通过数组（\[1,1,....\]）可以用很短的payload申请大量的内存。但waf中同时使用正则表达式"\\"\\s*:\\s*\\\["过滤了数组。绕过这条规则使用了cjson和pcre2的一个解析差异，cjson中会使用自定义的skip函数跳过所有≤0x20的字符
+第一点带来的主要问题是 payload 的长度是有限制的，攻击者需要使用较短的 payload 申请大量堆内存，为后续利用做准备。通过逆向或者阅读 cjson 的代码可以发现通过数组（\[1,1,....\]）可以用很短的 payload 申请大量的内存。但 waf 中同时使用正则表达式"\\"\\s*:\\s*\\\["过滤了数组。绕过这条规则使用了 cjson 和 pcre2 的一个解析差异，cjson 中会使用自定义的 skip 函数跳过所有≤0x20 的字符
 
 ```plain
 const char *__cdecl skip(const char *in)
@@ -93,29 +93,29 @@ const char *__cdecl skip(const char *in)
 }
 ```
 
-而pcre2的\\s只会匹配空白字符（\\n, \\r, \\t, 空格等），因此只需要用二者之间差集中的特殊字符即可绕过正则规则，同时能使用数组，如"a:\\x01\[1,1\]"
+而 pcre2 的\\s只会匹配空白字符（\\n, \\r, \\t, 空格等），因此只需要用二者之间差集中的特殊字符即可绕过正则规则，同时能使用数组，如"a:\\x01\[1,1\]"
 
-针对第二点，需要使用`house of orange`。`house of orange`是在2016 HITCON CTF Quals中出现的堆利用技巧。攻击者通过该技巧可以在程序本身无法触发free的情况下，通过一系列堆布局，最终使glibc堆管理器将某块堆内存释放。你可以阅读[how2heap的例子](https://github.com/shellphish/how2heap/blob/master/glibc_2.23/house_of_orange.c)或者其他文章来学习该技巧。
+针对第二点，需要使用`house of orange`。`house of orange`是在 2016 HITCON CTF Quals 中出现的堆利用技巧。攻击者通过该技巧可以在程序本身无法触发 free 的情况下，通过一系列堆布局，最终使 glibc 堆管理器将某块堆内存释放。你可以阅读[how2heap 的例子](https://github.com/shellphish/how2heap/blob/master/glibc_2.23/house_of_orange.c)或者其他文章来学习该技巧。
 
 笔者这里用几个简单的图来说明针对该题目如何通过`house of orange`构造一个`fastbin attack`。
 
--   json允许字典，数组等形式传递数据。`cJSON`中针对数组的每一项都需要申请单独的内存。因此我们可以通过大量数组的形式去分配大量内存，使top chunk变得足够小
+-   json 允许字典，数组等形式传递数据。`cJSON`中针对数组的每一项都需要申请单独的内存。因此我们可以通过大量数组的形式去分配大量内存，使 top chunk 变得足够小
 
 [![](assets/1706771580-f21f53f8734ea9b75b8259e9ba45eecc.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240130151157-dad58cd4-bf3e-1.png)
 
--   之后申请一块大内存，使topchunk无法满足要求导致被释放（`house of orange`）
+-   之后申请一块大内存，使 topchunk 无法满足要求导致被释放（`house of orange`）
 
 [![](assets/1706771580-b13f1983ba0307a3546ebfe679317012.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240130151236-f1c4f042-bf3e-1.png)
 
--   重复以上步骤，再次构造一个free chunk
+-   重复以上步骤，再次构造一个 free chunk
 
 [![](assets/1706771580-35d60fa7f0edf774298dc22914ca0247.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240130151253-fc29e8d0-bf3e-1.png)
 
--   申请第一个free chunk，通过漏洞溢出到第二个free chunk，构造fastbin attack
+-   申请第一个 free chunk，通过漏洞溢出到第二个 free chunk，构造 fastbin attack
 
 [![](assets/1706771580-c1dcd9378056d4658ea815805afdd80a.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240130151309-05afcbcc-bf3f-1.png)
 
-通过以上方式可以构造一个`fastbin attack`。之后可以通过`fastbin attack`去修改data段的函数指针,跳转到ROP最终完成利用（PS：这里很有趣的一点是，如果没有protobuf存储在data段上的函数指针，在开启Full RELRO的情况下也无法完成利用）
+通过以上方式可以构造一个`fastbin attack`。之后可以通过`fastbin attack`去修改 data 段的函数指针，跳转到 ROP 最终完成利用（PS：这里很有趣的一点是，如果没有 protobuf 存储在 data 段上的函数指针，在开启 Full RELRO 的情况下也无法完成利用）
 
 完整的利用脚本如下：
 

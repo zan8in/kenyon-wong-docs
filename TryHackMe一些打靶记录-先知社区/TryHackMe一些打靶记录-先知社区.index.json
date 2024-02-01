@@ -2,16 +2,16 @@
   "version": "2.0",
   "clipId": "1706771526",
   "format": "md",
-  "title": "TryHackMe一些打靶记录 - 先知社区",
+  "title": "TryHackMe 一些打靶记录 - 先知社区",
   "link": "https://xz.aliyun.com/t/13467",
   "category": "default",
   "tags": [
     "xz.aliyun.com"
   ],
   "created_at": "2024-02-01 15:12:06",
-  "mainPath": "TryHackMe一些打靶记录-先知社区.md",
+  "mainPath": "TryHackMe 一些打靶记录 - 先知社区.md",
   "paths": [
-    "TryHackMe一些打靶记录-先知社区.index.json",
+    "TryHackMe 一些打靶记录 - 先知社区.index.json",
     "assets/1706771526-adf1d4c346cf85fcd1ab649995cb2043.png",
     "assets/1706771526-19f1138f5ef096997e4c72a569c33550.png",
     "assets/1706771526-dc6cdbd68ee8c0fa8a69f37b2bdab2cc.png",
@@ -53,6 +53,6 @@
     "assets/1706771526-2a7ecb5f93b02b76daecbe36441f14c1.png",
     "assets/1706771526-8ca8dcd796c79a79dd111c6c5a515f19.png",
     "assets/1706771526-711388814998c7e20bd1f9f36834bab0.png",
-    "TryHackMe一些打靶记录-先知社区.md"
+    "TryHackMe 一些打靶记录 - 先知社区.md"
   ]
 }

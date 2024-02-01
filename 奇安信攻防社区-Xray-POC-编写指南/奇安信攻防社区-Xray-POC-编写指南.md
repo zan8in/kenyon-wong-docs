@@ -12,13 +12,13 @@
 
 ### YAML
 
-> 一种可读的序列化数据，类似JSON。参考：[YAML - Wiki](https://en.wikipedia.org/wiki/YAML)
+> 一种可读的序列化数据，类似 JSON。参考：[YAML - Wiki](https://en.wikipedia.org/wiki/YAML)
 
 -   特点：
     -   大小写敏感
     -   可以使用`#`号注释
     -   **使用缩进表示层级关系**，缩进**不允许**使用`Tab`，可以用空格
--   关于YAML字符串转义：[https://stackoverflow.com/questions/3790454/](https://stackoverflow.com/questions/3790454/)
+-   关于 YAML 字符串转义：[https://stackoverflow.com/questions/3790454/](https://stackoverflow.com/questions/3790454/)
 
 ### 基本信息
 
@@ -26,9 +26,9 @@
 
 ```yaml
 # 基本信息
-# POC名称,一般格式为 poc-yaml-<组件名>-<漏洞编号>-<漏洞类型>
+# POC 名称，一般格式为 poc-yaml-<组件名>-<漏洞编号>-<漏洞类型>
 name: poc-yaml-test
-# 区分是否手工编写,Xray有一些poc是自动生成的
+# 区分是否手工编写，Xray 有一些 poc 是自动生成的
 manual: true
 ```
 
@@ -45,7 +45,7 @@ manual: true
         -   `search`字段定义匹配的正则表达式，返回一个字典
         -   `info:search["info"]`：
             -   `info`是自定义的变量名，后面可以用`{{info}}`进行调
-            -   `search["info"]`：`search`字典中Key为`info`的值
+            -   `search["info"]`：`search`字典中 Key 为`info`的值
 -   `expression`：全部`rule`的执行顺序，遵循短路求值
     -   短路求值：即`r1() || r2()`，如果`r1()`的结果为`true`，那么`r2()`不会执行
     -   示例：
@@ -89,14 +89,14 @@ r1:
 
     # 从响应包获取数据
     output:  
-        # search,指定搜索语法
+        # search，指定搜索语法
         search: |
             r'(?P<info>\|.*\|)'.bsubmatch(response.raw)'
-        # 变量名:匹配规则
+        # 变量名：匹配规则
         info: search["info"]
 ```
 
-# rule执行顺序
+# rule 执行顺序
 
 expression:  
 r1()
@@ -113,16 +113,16 @@ detail:
   author: Chaitin(https://www.chaitin.cn/)
   links:
     - https://docs.xray.cool/
-  # 还有一些指纹和漏洞信息,可以参考文档
+  # 还有一些指纹和漏洞信息，可以参考文档
 ````
 
 完整POC：
 
 ```yaml
 # 基本信息
-# POC名称,一般格式为 poc-yaml-[框架名]-<漏洞编号>
+# POC 名称，一般格式为 poc-yaml-[框架名]-<漏洞编号>
 name: poc-yaml-test
-# 区分是否手工编写,Xray有一些poc是自动生成的
+# 区分是否手工编写，Xray 有一些 poc 是自动生成的
 manual: true
 
 # 脚本部分
@@ -155,16 +155,16 @@ rules:
             # 变量名:匹配规则
             info: search["info"]
 
-# rule执行顺序
+# rule 执行顺序
 expression:
     r1()
 
-# 信息部分,非必填内容
+# 信息部分，非必填内容
 detail:
   author: Chaitin(https://chaitin.com/)
   links:
     - https://docs.xray.cool/
-  # 还有一些指纹和漏洞信息,可以参考文档
+  # 还有一些指纹和漏洞信息，可以参考文档
 ```
 
 ## expression
@@ -176,14 +176,14 @@ expression: response.status == 200                    # Status-Code
 expression: "zbx_session" in response.headers         # Header
 expression: response.body.bcontains(b"verify_string") # Body
 
-# 前面使用了md5加密随机值: md5({{randNum}}), 后面可使用以下语句来进行匹配: 
+# 前面使用了 md5 加密随机值：md5({{randNum}}), 后面可使用以下语句来进行匹配：
 expression: response.body.bcontains(bytes(md5(string(randNum))))
 ```
 
 搜索字符：
 
 ```yaml
-# 搜索Body
+# 搜索 Body
 search: |
   "\"verify_string\":\"(?P<token>\\w+)\"".bsubmatch(response.body) 
 ```
@@ -329,7 +329,7 @@ $ gamma run --target "http://xxx.com" --script xxx.yml
 # 调试运行
 $ GAMMA_LOG_LEVEL=debug ./gamma run --no-cache --target "http://xxx.com" --script xxx.yml
 
-# 搭配Burp调试
+# 搭配 Burp 调试
 $ gamma run --target "http://xxx.com" --script xxx.yml --http-proxy http://127.0.0.1:8080
 ```
 

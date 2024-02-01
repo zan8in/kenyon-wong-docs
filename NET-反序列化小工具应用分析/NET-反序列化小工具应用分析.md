@@ -7,7 +7,7 @@
   
 [↑↑↑](javascript:)
 
-2024年01月17日  
+2024 年 01 月 17 日  
 [安全工具&安全开发](https://paper.seebug.org/category/tools/)
 
 ## 目录
@@ -18,15 +18,15 @@
     -   [1.2 SolarWinds 平台 - CVE-2022-36957](#12-solarwinds-cve-2022-36957)
     -   [1.3 SolarWinds Platform – CVE-2022-36958](#13-solarwinds-platform-cve-2022-36958)
     -   [1.4 SolarWinds 平台 – CVE-2022-36964](#14-solarwinds-cve-2022-36964)
-    -   [1.5 SolarWinds平台 – 已实施的缓解措施](#15-solarwinds)
-    -   [1.6 SolarWinds平台 – 第一个绕过 - CVE-2022-38111](#16-solarwinds-cve-2022-38111)
+    -   [1.5 SolarWinds 平台 – 已实施的缓解措施](#15-solarwinds)
+    -   [1.6 SolarWinds 平台 – 第一个绕过 - CVE-2022-38111](#16-solarwinds-cve-2022-38111)
     -   [1.7 SolarWinds Platform – 第二个绕过 – CVE-2022-47503](#17-solarwinds-platform-cve-2022-47503)
     -   [1.8 SolarWinds Platform – 第 3 个绕过 - CVE-2022-47507](#18-solarwinds-platform-3-cve-2022-47507)
-    -   [1.9 SolarWinds平台 - 第4次绕过 - CVE-2023-23836](#19-solarwinds-4-cve-2023-23836)
+    -   [1.9 SolarWinds 平台 - 第 4 次绕过 - CVE-2023-23836](#19-solarwinds-4-cve-2023-23836)
     -   [1.10 SolarWinds 平台 – 总结](#110-solarwinds)
 -   [2 反序列化小工具在第三方库中](#2)
     -   [2.1 Grpc.Core – UnmanagedLibrary 远程 DLL 加载](#21-grpccore-unmanagedlibrary-dll)
-    -   [2.1 Xunit Runner Utility – Xunit1Executor远程DLL加载](#21-xunit-runner-utility-xunit1executordll)
+    -   [2.1 Xunit Runner Utility – Xunit1Executor 远程 DLL 加载](#21-xunit-runner-utility-xunit1executordll)
     -   [2.3 MongoDB Libmongocrypt – WindowsLibrary / LinuxLibrary / DarwinLibrary](#23-mongodb-libmongocrypt-windowslibrary-linuxlibrary-darwinlibrary)
     -   [2.4 Xunit Execution – PreserveWorkingFolder](#24-xunit-execution-preserveworkingfolder)
     -   [2.6 Microsoft Azure Cosmos – QueryPartitionProvider](#26-microsoft-azure-cosmos-querypartitionprovider)
@@ -49,7 +49,7 @@
         -   [4.3.2 不安全的序列化 – Amazon AWSSDK 核心 OptimisticLockedTextFile 任意文件阅读小工具](#432-amazon-awssdk-optimisticlockedtextfile)
         -   [4.3.3 不安全的序列化 – Castle Core CustomUri 环境变量泄漏](#433-castle-core-customuri)
     -   [4.4 不安全的序列化 – Azure.Core QueryPartitionProvider 反序列化小工具触发序列化](#44-azurecore-querypartitionprovider)
-    -   [4.5 不安全的序列化 – Delta Electronics InfraSuite Device Master CVE-2023-1139和 CVE-2023-1145](#45-delta-electronics-infrasuite-device-master-cve-2023-1139-cve-2023-1145)
+    -   [4.5 不安全的序列化 – Delta Electronics InfraSuite Device Master CVE-2023-1139 和 CVE-2023-1145](#45-delta-electronics-infrasuite-device-master-cve-2023-1139-cve-2023-1145)
     -   [4.5 不安全的序列化 – SolarWinds Platform CVE-2022-47504](#45-solarwinds-platform-cve-2022-47504)
 -   [5 .NET Framework 中的新反序列化小工具](#5-net-framework)
     -   [5.1 任意 getter 调用小工具的想法](#51-getter)
@@ -78,11 +78,11 @@
 -   [参考链接](#_2)
 
 **原文链接：[https://github.com/thezdi/presentations/blob/main/2023\_Hexacon/whitepaper-net-deser.pdf](https://github.com/thezdi/presentations/blob/main/2023_Hexacon/whitepaper-net-deser.pdf)**  
-**译者：知道创宇404实验室翻译组**
+**译者：知道创宇 404 实验室翻译组**
 
 ### 简介
 
-不受信任数据的反序列化是多种编程语言中最常被滥用的漏洞类型之一。2015年，Gabriel Lawrence 和 Chris Frohoff 发表了一篇关于 Java 反序列化攻击的演讲，引起了人们对反序列化漏洞的广泛关注。早在 2012 年，James Foreshaw 在 Black Hat 上就呈现了 .NET 方面与反序列化相关的白皮书。随后，Alvaro Munoz 和 Oleksandr Mirosh 在 2017 年的 Black Hat 上进行了一项名为“Friday the 13th JSON Attacks”的研究。他们的工作主要聚焦在 .NET 和 Java JSON/XML 反序列化漏洞，包括：
+不受信任数据的反序列化是多种编程语言中最常被滥用的漏洞类型之一。2015 年，Gabriel Lawrence 和 Chris Frohoff 发表了一篇关于 Java 反序列化攻击的演讲，引起了人们对反序列化漏洞的广泛关注。早在 2012 年，James Foreshaw 在 Black Hat 上就呈现了 .NET 方面与反序列化相关的白皮书。随后，Alvaro Munoz 和 Oleksandr Mirosh 在 2017 年的 Black Hat 上进行了一项名为“Friday the 13th JSON Attacks”的研究。他们的工作主要聚焦在 .NET 和 Java JSON/XML 反序列化漏洞，包括：
 
 -   回顾基于 JSON/XML 的序列化程序。
 -   多个反序列化小工具，可用于滥用不安全的反序列化。
@@ -150,7 +150,7 @@
 -   高权限用户能够通过 SolarWinds Orion 平台提取这些凭据。
 -   后来我发现了 CVE-2023-3322512，允许低权限用户提取这些凭据。
 
-该漏洞针对 SolarWinds 信息服务。为了向信息服务传递 AMQP 消息，消息的 Routing-Key 必须设置为 SwisPubSub。 让我们验证 SolarWinds 如何处理这些 `EasyNetQ.Consumer.HandleBasicDeliver` 方法：
+该漏洞针对 SolarWinds 信息服务。为了向信息服务传递 AMQP 消息，消息的 Routing-Key 必须设置为 SwisPubSub。让我们验证 SolarWinds 如何处理这些 `EasyNetQ.Consumer.HandleBasicDeliver` 方法：
 
 ````plain
 public void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool
@@ -286,7 +286,7 @@ JsonSerializerSettings
 
 #### 1.2 SolarWinds 平台 - CVE-2022-36957
 
-在前面的漏洞中，我们通过 AMQP 属性完全控制了目标反序列化类型。当我发现这样的漏洞时，我喜欢问自己以下问题：“合法消息是什么样的？”我经常检查在典型产品操作期间进行反序列化的类型,并得到有趣的发现。我很快意识到 SolarWinds 只发送一种类型的消息：`SolarWinds.MessageBus.Models.Indication`。
+在前面的漏洞中，我们通过 AMQP 属性完全控制了目标反序列化类型。当我发现这样的漏洞时，我喜欢问自己以下问题：“合法消息是什么样的？”我经常检查在典型产品操作期间进行反序列化的类型，并得到有趣的发现。我很快意识到 SolarWinds 只发送一种类型的消息：`SolarWinds.MessageBus.Models.Indication`。
 
 让我们花点时间分析一下这个类型：
 
@@ -422,7 +422,7 @@ if (reader.TokenType == JsonToken.StartObject)
 
 #### 1.3 SolarWinds Platform – CVE-2022-36958
 
-SolarWinds 定义了一些内部操作，称为“SWIS 动词”。这些动词可以是： a) 通过 API 直接调用。  
+SolarWinds 定义了一些内部操作，称为“SWIS 动词”。这些动词可以是：a) 通过 API 直接调用。  
 b) 通过 Orion 平台 Web 用户界面间接调用（Orion 平台在内部调用）。
 
 关于 SWIS 动词，有几件事情我们需要知道：
@@ -653,7 +653,7 @@ type); // [4]
 
 在\[4\]处，初始化了一个 `XmlStrippedSerializer` 对象。构造函数提供了四个参数：
 
--   一个新的 `XmlSerializer` 实例，其中序列化器的类型由攻击者控制(!)。
+-   一个新的 `XmlSerializer` 实例，其中序列化器的类型由攻击者控制 (!)。
 -   从 `XmlTypeMapping` 获取的目标类型的 `XsdElementName`。
 -   从 `XmlTypeMapping` 获取的类型的命名空间。
 -   类型本身。
@@ -784,7 +784,7 @@ removed for clarity</anyType>
 
 我已经在 CVE-2021-31474 中使用了相同的类进行了 `Json.NET` 反序列化的滥用，随后我意识到这个类也可以以完全不同的方式被滥用。
 
-#### 1.5 SolarWinds平台 – 已实施的缓解措施
+#### 1.5 SolarWinds 平台 – 已实施的缓解措施
 
 这篇白皮书的主要研究思想之一 —— 在产品代码库中查找反序列化小工具。首先，让我们验证两个基于 `Json.NET` 反序列化漏洞的已实施缓解措施：
 
@@ -857,7 +857,7 @@ rogate+ObjectSerializedRef",
 
 现在我们知道了 `Json.NET` 可以实现什么，让我们浏览一下类的黑名单，并尝试绕过它。
 
-#### 1.6 SolarWinds平台 – 第一个绕过 - CVE-2022-38111
+#### 1.6 SolarWinds 平台 – 第一个绕过 - CVE-2022-38111
 
 在分析黑名单，似乎有一项不对：`Microsoft.PowerShell.Editor`
 
@@ -869,7 +869,7 @@ rogate+ObjectSerializedRef",
 
 ![](assets/1706773633-eba73c07f4fb6e9076dcb16094d8239a.png)
 
-图3 TextFormattingRunProperties in ysoserial.net - no implementation for Json.NET
+图 3 TextFormattingRunProperties in ysoserial.net - no implementation for Json.NET
 
 看起来这是我们目前唯一可用的工具，我们可能需要进一步确认这个类确实不可行。让我们看看这个小工具是如何工作的。
 
@@ -945,7 +945,7 @@ C:\\Users\\Public\\abcd.txt</System:String>
 
 #### 1.7 SolarWinds Platform – 第二个绕过 – CVE-2022-47503
 
-当将上一个漏洞报告给供应商时，我的第一个想法是：“它可能会被修复在黑名单中的项。” 因此，我必须找到不同的方法来利用我们的反序列化漏洞。我的研究想法是：查看 `SolarWinds` 中实现的类，并验证：
+当将上一个漏洞报告给供应商时，我的第一个想法是：“它可能会被修复在黑名单中的项。”因此，我必须找到不同的方法来利用我们的反序列化漏洞。我的研究想法是：查看 `SolarWinds` 中实现的类，并验证：
 
 -   有没有任何可以由 `Json.NET` 反序列化的类。
 -   这会导致一些潜在的危险行为。
@@ -1241,7 +1241,7 @@ Version=2022.4.0.0, Culture=neutral, PublicKeyToken=null",
 
 代码段 29 WorkerProcessWCFProxy gadget
 
-#### 1.9 SolarWinds平台 - 第4次绕过 - CVE-2023-23836
+#### 1.9 SolarWinds 平台 - 第 4 次绕过 - CVE-2023-23836
 
 前两个小工具是基于一个简单的想法，它允许我们调用 `Process.Start` 方法。当攻击者控制输入参数时，这很容易被发现并且明显是恶意的。
 
@@ -1375,7 +1375,7 @@ a) 我们可以提供 UNC 路径，直接从我们的 SMB 服务器加载配置�
 
 b) 它可以与文件写入基元链接。请注意，路径、扩展名和文件名都未经任何验证，因此我们可以使用合法的文件写入功能（如图像上传）来传递我们的配置文件。
 
-由于 log4net 正在处理日志文件，我开始考虑文件上传基元。我查看了 log4net ，找到了以下配置：
+由于 log4net 正在处理日志文件，我开始考虑文件上传基元。我查看了 log4net，找到了以下配置：
 
 ```plain
 <log4net> 
@@ -1471,7 +1471,7 @@ SolarWinds 平台部分的章节中，我展示了在该产品中发现的几种
 | NLOG | CountingSingleProcessFileAppender  <br>SingleProcessFileAppender  <br>MutextMultiProcessFileAppender | Potential DoS | If process runs as SYSTEM,  <br>may lead to DoS through  <br>directory/file creation. |
 | Google Apis | FileDataStore | Potential DoS | If process runs as SYSTEM,  <br>may lead to DoS through  <br>directory creation. |
 
-表1：第三方库中的反序列化小工具
+表 1：第三方库中的反序列化小工具
 
 以下子章节详细描述了这些小工具。
 
@@ -1638,7 +1638,7 @@ private static class MacOSX
 
 代码段 40 Grpc.Core - Mac library loading
 
-#### 2.1 Xunit Runner Utility – Xunit1Executor远程DLL加载
+#### 2.1 Xunit Runner Utility – Xunit1Executor 远程 DLL 加载
 
 目标类：`Xunit.Xunit1Executor`
 
@@ -1715,13 +1715,13 @@ PermissionSet(PermissionState.Unrestricted), new StrongName[0]); // [2]
 }
 ```
 
-代码段 43 Xunit1Executor - 通过 AppDomainManager\_AppDomain.CreateAppDomain 创建AppDomain
+代码段 43 Xunit1Executor - 通过 AppDomainManager\_AppDomain.CreateAppDomain 创建 AppDomain
 
 在\[1\]处，从攻击者的路径（在 gadget 中为 `testAssemblyFileName` 键）中提取目录名称。
 
 在\[2\]处，创建新的 AppDomain，并将其根路径设置为受攻击者控制的目录（在 gadget 中为远程 SMB 目录）。
 
-回到 `Xunit1Executor` 构造函数。在\[2\]处，`xunitAssemblyPath` 成员基于 `Xunit1Executor.GetXunitAssemblyPath` 设置。这个方法:
+回到 `Xunit1Executor` 构造函数。在\[2\]处，`xunitAssemblyPath` 成员基于 `Xunit1Executor.GetXunitAssemblyPath` 设置。这个方法：
 
 -   从 testAssemblyFileName（这里是 \\192.168.1.100\\poc）中检索目录名称。
 -   将 xunit.dll 附加到路径。
@@ -2080,15 +2080,15 @@ FileAccess.ReadWrite, FileShare.None, 4096, FileOptions.DeleteOnClose))
 
 #### 2.7 NLOG – CountingSingleProcessFileAppender / SingleProcessFileAppender / MutexMultiProcessFileAppender
 
-目标类: `NLog.Internal.FileAppenders.CountingSingleProcessFileAppender` `NLog.Internal.FileAppenders.SingleProcessFileAppender` `NLog.Internal.FileAppenders.MutexMultiProcessFileAppender`
+目标类：`NLog.Internal.FileAppenders.CountingSingleProcessFileAppender` `NLog.Internal.FileAppenders.SingleProcessFileAppender` `NLog.Internal.FileAppenders.MutexMultiProcessFileAppender`
 
 适用性 (序列化器): `Json.NET`、`XamlReader`、`MessagePack` 和可能的其他序列化器。
 
 适用性 (.NET): .NET Framework (.NET>=5 未经验证)
 
-最新测试版本: 5.2.4
+最新测试版本：5.2.4
 
-效果: 目录创建和空文件创建。如果目标应用程序以 SYSTEM 权限运行，可以通过创建目录/文件来实现拒绝服务。
+效果：目录创建和空文件创建。如果目标应用程序以 SYSTEM 权限运行，可以通过创建目录/文件来实现拒绝服务。
 
 小工具 (Json.NET):
 
@@ -2107,7 +2107,7 @@ PublicKeyToken=5120e14c03d0593c"
 
 代码段 57 SingleProcessFileAppender
 
-描述:
+描述：
 
 这三个小工具都基于它们的构造函数调用 `NLog.Internal.FileAppenders.BaseFileAppender.CreateFileStream`。例如：
 
@@ -2181,15 +2181,15 @@ overrideBufferSize); // [3]
 
 #### 2.8 Google Apis - FileDataStore
 
-目标类: `Google.Apis.Util.Store.FileDataStore`
+目标类：`Google.Apis.Util.Store.FileDataStore`
 
 适用性 (序列化器): `Json.Net`, `XamlReader`, `MessagePack` 以及可能的其他序列化器。
 
 适用性 (.NET): .NET Framework
 
-最新测试版本: 1.62.1
+最新测试版本：1.62.1
 
-效果: 目录创建。如果目标应用程序以 SYSTEM 权限运行，则可以通过目录创建实现拒绝服务。
+效果：目录创建。如果目标应用程序以 SYSTEM 权限运行，则可以通过目录创建实现拒绝服务。
 
 小工具 (Json.NET):
 
@@ -2204,7 +2204,7 @@ Culture=neutral, PublicKeyToken=4b01fa6e34db77ab",
 
 代码段 59 FileDataStore gadget
 
-描述: `Google.Apis.Util.Store.FileDataStore` 实现了一个公共构造函数，直接导致目录的创建。
+描述：`Google.Apis.Util.Store.FileDataStore` 实现了一个公共构造函数，直接导致目录的创建。
 
 ```plain
 public FileDataStore(string folder, bool fullPath = false) 
@@ -2679,7 +2679,7 @@ internal static void Assert(bool condition)
 
 ![](assets/1706773633-5cb41574cb22faf8ddbd9e76e782a435.png)
 
-图 6 简单的反序列化-序列化方案
+图 6 简单的反序列化 - 序列化方案
 
 在这个阶段，人们可能会认为应用程序首先执行反序列化，因此其余的操作并不相关。但是我们可以考虑以下场景：
 
@@ -2726,7 +2726,7 @@ internal static void Assert(bool condition)
 | SecurityException | Serialization | RCE through BinaryFormatter  <br>deserialization. |
 | CompilerResults | Serialization | Local DLL loading. Can be chained  <br>with file write  <br>functionalities/vulnerabilities. |
 
-表2 在.NET Framework中的序列化小工具
+表 2 在.NET Framework 中的序列化小工具
 
 ##### 4.2.1 不安全的序列化 – SettingsPropertyValue 远程代码执行小工具
 
@@ -2843,7 +2843,7 @@ public object PropertyValue
 
 代码段 75 SettingsPropertyValue - PropertyValue member
 
-在 \[1\] 处，代码检查 `_Deserialized` 成员是否设置为 true。我们已经将其设置为 false。 如果 `_Deserialized` 是 false，则将调用 `SettingsPropertyValue.Deserialize` 方法。
+在 \[1\] 处，代码检查 `_Deserialized` 成员是否设置为 true。我们已经将其设置为 false。如果 `_Deserialized` 是 false，则将调用 `SettingsPropertyValue.Deserialize` 方法。
 
 ```plain
 private object Deserialize() 
@@ -2894,7 +2894,7 @@ MemoryStream((byte[])this.SerializedValue); // [2]
 
 效果：导致 `BinaryFormatter.Deserialize` 调用，攻击者完全控制输入。由于 `BinaryFormatter` 存在多个工具，因此该工具允许实现远程代码执行。
 
-描述： 该工具可通过对 `System.Security.SecurityException.get_Method` 的调用而被滥用。这个序列化工具难以利用，因为它需要结合两种不同类型的序列化器：
+描述：该工具可通过对 `System.Security.SecurityException.get_Method` 的调用而被滥用。这个序列化工具难以利用，因为它需要结合两种不同类型的序列化器：
 
 -   在反序列化/序列化期间支持 Serializable 接口的序列化器。
 -   不支持 Serializable 接口或在调用 Serializable 特定方法之前优先调用 getter 的序列化器。
@@ -3019,11 +3019,11 @@ typeof(byte[])); // [1]
 
 ##### 4.2.3 不安全序列化 – CompilerResults 本地 DLL 加载小工具
 
-类型: 序列化小工具。
+类型：序列化小工具。
 
-效果: 该小工具允许从任何位置加载本地 DLL。可以与其他小工具链接使用。
+效果：该小工具允许从任何位置加载本地 DLL。可以与其他小工具链接使用。
 
-描述: 通过对 `System.CodeDom.Compiler.CompilerResults.get_CompiledAssembly getter` 的调用可以滥用此小工具。已发现该小工具可在多个不同的序列化器中被利用，包括 Json.NET。
+描述：通过对 `System.CodeDom.Compiler.CompilerResults.get_CompiledAssembly getter` 的调用可以滥用此小工具。已发现该小工具可在多个不同的序列化器中被利用，包括 Json.NET。
 
 对象准备 - 反序列化： `System.CodeDom.Compiler.CompilerResults` 实现了一个公共构造函数，该构造函数定义了 `TempFileCollection` 类型的输入。
 
@@ -3071,7 +3071,7 @@ Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
 
 代码段 84 CompilerResults - .NET Framework serialization gadget
 
-不安全的序列化:
+不安全的序列化：
 
 在序列化期间，将调用 `get_CompiledAssembly getter`。
 
@@ -3123,7 +3123,7 @@ SecurityPermissionFlag.ControlEvidence)]
 
 最新测试版本：2.1.0
 
-描述：该小工具可以通过调用 `Apache.NMS.ActiveMQ.Commands.ActiveMQObjectMessage.get_Body` 获取器而被滥用。实际上，这是一个非常简单的序列化小工具，应该适用于大多数基于 setter 的序列化器。它经过 `Json.NET`、`JavaScriptSerializer` 和 `MessagePack` 序列化器的测试。在所有情况下，它都很容易在反序列化-序列化场景中导致远程代码执行。
+描述：该小工具可以通过调用 `Apache.NMS.ActiveMQ.Commands.ActiveMQObjectMessage.get_Body` 获取器而被滥用。实际上，这是一个非常简单的序列化小工具，应该适用于大多数基于 setter 的序列化器。它经过 `Json.NET`、`JavaScriptSerializer` 和 `MessagePack` 序列化器的测试。在所有情况下，它都很容易在反序列化 - 序列化场景中导致远程代码执行。
 
 对象准备 - 反序列化：
 
@@ -3275,7 +3275,7 @@ TrustedClassFilter(base.Connection.DeserializationPolicy, base.Destination);
 
 代码段 91 ActiveMQObjectMessage - Formatter member in version 2.1.0
 
-可以看到，在\[1\]处，代码检查 `Connection.DeserializationPolicy` 是否为null。如果不是，则设置指定的反序列化绑定器。
+可以看到，在\[1\]处，代码检查 `Connection.DeserializationPolicy` 是否为 null。如果不是，则设置指定的反序列化绑定器。
 
 这个更改仍然允许将此类用作序列化小工具。然而，攻击者需要在小工具中指定有效的 Connection 成员。否则，将抛出异常。请参阅“对象准备 - 反序列化”部分，了解版本 2.1.0 和版本 < 2.1.0 的小工具之间的区别。
 
@@ -3285,7 +3285,7 @@ TrustedClassFilter(base.Connection.DeserializationPolicy, base.Destination);
 
 类型：反序列化到序列化小工具。
 
-最新测试版本： 3.7.202.19
+最新测试版本：3.7.202.19
 
 根本原因：`OptimisticLockedTextFile` 工具在反序列化过程中使用。文件内容是通过 getter 方法检索的，因此它在序列化期间。
 
@@ -3442,7 +3442,7 @@ mscorlib",
 
 根本原因：CustomUri 在反序列化期间分析 URI 字符串。它还扩大了环境存储在 URI 中的变量。扩展的路径存储在序列化对象中。
 
-描述：Castle Core 库实现了 `Castle.Core.Resource.CustomUri` 类。它的构造函数创建路径 （URI）。路径解析算法扩展了环境变量。在序列化时，带有扩展变量的路径将返回给攻击者。
+描述：Castle Core 库实现了 `Castle.Core.Resource.CustomUri` 类。它的构造函数创建路径（URI）。路径解析算法扩展了环境变量。在序列化时，带有扩展变量的路径将返回给攻击者。
 
 对象准备 – 反序列化：
 
@@ -3633,14 +3633,14 @@ gadget"}}}
 
 代码段 105 QueryPartitionProvider - chaining deserialization with serialization in JSON.NET
 
-#### 4.5 不安全的序列化 – Delta Electronics InfraSuite Device Master CVE-2023-1139和 CVE-2023-1145
+#### 4.5 不安全的序列化 – Delta Electronics InfraSuite Device Master CVE-2023-1139 和 CVE-2023-1145
 
 在前面的章节中提到，InfraSuite Device Master 产品：
 
 -   反序列化每条消息（甚至是身份验证消息）。这意味着反序列化是在身份验证之前执行。
 -   使用旧版本的 MessagePack 序列化器（低于 2.3.75）。经典 `ObjectDataProvider` 小工具不能与此版本的序列化程序一起使用（它会导致拒绝服务而非远程代码执行）。
 -   反序列化对象，然后再次将其序列化回来。
--   此类通信在两个单独的服务中实现：设备网关 （CVE-2023-1139） 和 Device-DataCollection （CVE-2023-1145）。
+-   此类通信在两个单独的服务中实现：设备网关（CVE-2023-1139）和 Device-DataCollection（CVE-2023-1145）。
 
 首先，InfraSuite Device Master 需要 `InfraSuiteManager.GrpcService.Service.ServiceRequest` 类型。
 
@@ -3759,7 +3759,7 @@ GADGET\x00\n\x0b\xa6status\x00\xa8finished\xc2
 
 由于 Amazon 小工具已经被描述过，我将专注于 `SolarWinds SqlFileScript` 类。
 
-`SolarWinds.MessageBus.RabbitMQ.EasyNetQSerializer`类实现了两个主要方法：MessageToBytes（序列化方法）和BytesToMessage（反序列化方法）。
+`SolarWinds.MessageBus.RabbitMQ.EasyNetQSerializer`类实现了两个主要方法：MessageToBytes（序列化方法）和 BytesToMessage（反序列化方法）。
 
 ```plain
 public byte[] MessageToBytes(Type messageType, object message) // [1] 
@@ -3976,7 +3976,7 @@ PublicKeyToken=null",
 
 最后，将介绍 `.NET Framework` 中的几个非 RCE 小工具。主要展示了服务器端请求伪造小工具，它们允许使用不同的协议访问所选资源（如 HTTP、FTP 或 SMB）。这些小工具可以被视为 `Java URLDNS26` 小工具的更强大的姐妹工具，它在漏洞赏金猎人和渗透测试人员中非常强大。它们不仅有助于提高反序列化漏洞的检测率（尤其是在黑盒测试期间），而且由于可以执行实际请求，因此在实际利用中也可以使用。
 
-以下表格列出了我在.NET Framework中的小工具列表：
+以下表格列出了我在.NET Framework 中的小工具列表：
 
 | **Gadget** | **Applicability** | **Effect** | **Description** |
 | --- | --- | --- | --- |
@@ -4010,7 +4010,7 @@ ISupportInitializeNotification, ISupportInitialize, IcurrencyManagerProvider
 
 代码段 113 System.Windows.Forms.BindingSource declaration
 
-基于此，序列化器将不会调用 BindingSource 的 setter 方法。相反，它们将尝试使用像 Add 这样的方法来反序列化此对象。接下来的章节介绍了4个新的任意 getter 调用反序列化小工具。它们将与不安全的序列化小工具进行串联，以创建完整的远程代码执行链。
+基于此，序列化器将不会调用 BindingSource 的 setter 方法。相反，它们将尝试使用像 Add 这样的方法来反序列化此对象。接下来的章节介绍了 4 个新的任意 getter 调用反序列化小工具。它们将与不安全的序列化小工具进行串联，以创建完整的远程代码执行链。
 
 ##### 5.1.1 PropertyGrid - 任意 getter 调用小工具
 
@@ -4563,7 +4563,7 @@ public object someMember;
 
 适用范围：Json.NET、MessagePack（可能存在与构造函数中的抽象类型相关的问题）以及其他能够调用带参数构造函数的序列化器。
 
-小工具 （Json.NET）， variant 1 （GAC）：
+小工具（Json.NET），variant 1（GAC）：
 
 此小工具允许从文件加载恶意 XAML。可以提供 UNC 路径，因此文件可以从远程 SMB 服务器加载。
 
@@ -4584,7 +4584,7 @@ PublicKeyToken=31bf3856ad364e35",
 
 代码段 131 XamlImageInfo gadget - Json.NET GAC version
 
-小工具 （Json.NET）， variant 2 （non-GAC）：
+小工具（Json.NET），variant 2（non-GAC）：
 
 此小工具允许直接传递恶意 XAML，尽管需要非 `GAC DLL：Microsoft.Web.Deployment.dll`。
 
@@ -4782,7 +4782,7 @@ public byte[] Current
 
 #### 5.4 关于 XamlReader 的一些想法
 
-通常，人们会通过 `ObjectDataProvider` 利用 `System.Windows.Markup.XamlReader`。需要注意的是：该 XamlReader 支持 XAML2009，包括 x:FactoryMethod 指令28。
+通常，人们会通过 `ObjectDataProvider` 利用 `System.Windows.Markup.XamlReader`。需要注意的是：该 XamlReader 支持 XAML2009，包括 x:FactoryMethod 指令 28。
 
 简而言之，我们几乎能调用对象的任何方法，因此无需使用 `ObjectDataProvider`，只需执行以下操作：
 
@@ -4821,7 +4821,7 @@ xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml' x:FactoryMethod='Start'>
 -   非默认配置。
 -   不同的序列化程序。
 
-a） 系统环境
+a）系统环境
 
 这个类有一个公共的无参构造函数，通过 `CurrentDirectory` 成员可以修改当前目录。然而，这个成员是静态的，而在默认配置下 `Json.NET` 无法调用静态成员。
 
@@ -4841,11 +4841,11 @@ public static string CurrentDirectory
 
 代码段 139 Environment.CurrentDirectory static setter
 
-b） Microsoft.VisualBasic.FileIO.FileSystem
+b) Microsoft.VisualBasic.FileIO.FileSystem
 
 这与 `System.Environment` 中的情况相同。`FileSystem.CurrentDirectory` 是静态的。
 
-c） Microsoft.VisualBasic.MyServices.FileSystemProxy
+c) Microsoft.VisualBasic.MyServices.FileSystemProxy
 
 这一次，`CurrentDirectory` 是非静态的。
 
@@ -4899,7 +4899,7 @@ internal FileSystemProxy()
 
 代码段 142 PictureBox - exemplary JSON.NET gadget
 
-描述： 此小工具允许使用多种协议（HTTP、HTTPS、FTP 和 SMB）。必须以真正的价值调用 `set_WaitOnLoad`。
+描述：此小工具允许使用多种协议（HTTP、HTTPS、FTP 和 SMB）。必须以真正的价值调用 `set_WaitOnLoad`。
 
 ```plain
 public bool WaitOnLoad 
@@ -5370,13 +5370,13 @@ string fileName, IntPtr fileHandle, uint flags);
 
 适用性（序列化程序）：`Json.Net`，可能是 MessagePack 和其他可以调用的序列化程序带有参数的构造函数，尽管没有执行测试。
 
-适用性 （.NET）：适用于 Windows 的 .NET 5、6 和 7.
+适用性（.NET）：适用于 Windows 的 .NET 5、6 和 7.
 
 要求：序列化 - 无要求。反序列化 —— 启用 WPF 或 `PresentationFramework.dll` 可用。
 
 效果：序列化 - 通过远程加载混合 DLL 来远程执行代码。反序列 —— 通过远程加载混合 DLL 进行远程代码执行，当与 getter 调用小工具链接时。
 
-小工具（Json.NET）： 序列化小工具：
+小工具（Json.NET）：序列化小工具：
 
 ```plain
 { 
@@ -5469,7 +5469,7 @@ public Assembly CompiledAssembly
 
 让我们暂停一下。众所周知，从 .NET 4 开始，远程 DLL 加载通过 `Assembly.LoadFile` 或 `Assembly.LoadFrom` 被阻止。不可能为这些提供 UNC 路径方法，并从攻击者的 SMB 服务器加载 DLL（直到某些默认设置为修改）。
 
-事实证明，.NET 5、6 和 7 允许通过 `Assembly.LoadFile` 方法加载远程 DLL，因此这个小工具允许执行远程DLL加载。我已经检查了官方的 .NET 5、6 和 7 Assembly 类的文档，它明确指出应禁用远程加载：
+事实证明，.NET 5、6 和 7 允许通过 `Assembly.LoadFile` 方法加载远程 DLL，因此这个小工具允许执行远程 DLL 加载。我已经检查了官方的 .NET 5、6 和 7 Assembly 类的文档，它明确指出应禁用远程加载：
 
 ```plain
 Starting with .NET Framework 4, if pathspecifies an assembly in a remote location, assembly loading is disabled by default, and the LoadFilemethod throws a FileLoadException. To enable execution of code loaded from remote locations, you can use the <loadFromRemoteSources> configuration element.
@@ -5554,7 +5554,7 @@ Starting with .NET Framework 4, if pathspecifies an assembly in a remote locatio
 
 [](https://paper.seebug.org/users/author/?nickname=%E7%9F%A5%E9%81%93%E5%88%9B%E5%AE%87404%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%BF%BB%E8%AF%91%E7%BB%84)r
 
-#### [知道创宇404实验室翻译组](https://paper.seebug.org/users/author/?nickname=%E7%9F%A5%E9%81%93%E5%88%9B%E5%AE%87404%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%BF%BB%E8%AF%91%E7%BB%84)
+#### [知道创宇 404 实验室翻译组](https://paper.seebug.org/users/author/?nickname=%E7%9F%A5%E9%81%93%E5%88%9B%E5%AE%87404%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%BF%BB%E8%AF%91%E7%BB%84)
 
 阅读更多有关[该作者](https://paper.seebug.org/users/author/?nickname=%E7%9F%A5%E9%81%93%E5%88%9B%E5%AE%87404%E5%AE%9E%E9%AA%8C%E5%AE%A4%E7%BF%BB%E8%AF%91%E7%BB%84)的文章
 
@@ -5568,6 +5568,6 @@ Starting with .NET Framework 4, if pathspecifies an assembly in a remote locatio
 
 提交评论
 
-\* 注意:请正确填写邮箱，消息将通过邮箱通知！
+\* 注意：请正确填写邮箱，消息将通过邮箱通知！
 
 #### 暂无评论

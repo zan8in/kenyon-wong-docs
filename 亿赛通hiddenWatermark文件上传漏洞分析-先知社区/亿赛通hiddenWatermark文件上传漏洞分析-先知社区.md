@@ -1,8 +1,8 @@
 
 
-# 亿赛通hiddenWatermark文件上传漏洞分析 - 先知社区
+# 亿赛通 hiddenWatermark 文件上传漏洞分析 - 先知社区
 
-亿赛通hiddenWatermark文件上传漏洞分析
+亿赛通 hiddenWatermark 文件上传漏洞分析
 
 - - -
 
@@ -37,12 +37,12 @@
 </servlet-mapping>
 ```
 
-`DispatcherServlet` 处理和分发Web请求，典型的Spring MVC配置方式。
+`DispatcherServlet` 处理和分发 Web 请求，典型的 Spring MVC 配置方式。
 
 看看过滤器
 
 ```plain
-<!-- 验证serssion的过滤器 -->
+<!-- 验证 serssion 的过滤器 -->
     <filter>
         <filter-name>SessionValidateFilter</filter-name>
         <filter-class>
@@ -83,7 +83,7 @@
     </filter-mapping>
 ```
 
-这个 filter 会对 `/*` 鉴权，但是在配置中又排除了很多 url 。比如`excludedClientUrls` 中的`/hiddenWatermark/` 。
+这个 filter 会对 `/*` 鉴权，但是在配置中又排除了很多 url。比如`excludedClientUrls` 中的`/hiddenWatermark/` 。
 
 简单分析下`SessionValidateFilter`
 
@@ -97,7 +97,7 @@
 
 看到`excludedClientUrls`中的都不需要鉴权，当然不只这个。
 
-来看看具体路由,
+来看看具体路由，
 
 指定包扫描的规则
 

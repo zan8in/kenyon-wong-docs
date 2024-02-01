@@ -1,12 +1,12 @@
 
 
-# rebuild代码审计 - 先知社区
+# rebuild 代码审计 - 先知社区
 
-rebuild代码审计
+rebuild 代码审计
 
 - - -
 
-注：以下漏洞测试在rebuild历史版本，且都已提交CNNVD并通过
+注：以下漏洞测试在 rebuild 历史版本，且都已提交 CNNVD 并通过
 
 ## 鉴权分析
 
@@ -49,7 +49,7 @@ default boolean checkInstalled() {
     }
 ```
 
-前面的选项通过配置检查是否dev环境，默认不是，后面检查.rebuild文件是否存在，所以如果存在任意文件删除，删除掉.rebuild文件就会存在jdbc attack
+前面的选项通过配置检查是否 dev 环境，默认不是，后面检查.rebuild 文件是否存在，所以如果存在任意文件删除，删除掉.rebuild 文件就会存在 jdbc attack
 
 在接下去看没有授权信息时的处理
 
@@ -72,7 +72,7 @@ default boolean checkInstalled() {
         }
 ```
 
-看com.rebuild.web.RebuildWebInterceptor#isIgnoreAuth
+看 com.rebuild.web.RebuildWebInterceptor#isIgnoreAuth
 
 ```plain
 private boolean isIgnoreAuth(String requestUri) {  
@@ -102,13 +102,13 @@ private boolean isIgnoreAuth(String requestUri) {
     }
 ```
 
-当返回为ture时不需要授权 也就是
+当返回为 ture 时不需要授权 也就是
 
--   1：满足isIgnoreAuth函数return中任意条件可以跳过授权
--   2：url中存在/user/但不存在/user/admin
--   3：url中包含/filex/
+-   1：满足 isIgnoreAuth 函数 return 中任意条件可以跳过授权
+-   2：url 中存在/user/但不存在/user/admin
+-   3：url 中包含/filex/
 
-注：且controller函数体中不能存在getRequestUser  
+注：且 controller 函数体中不能存在 getRequestUser  
 根据以上代码获取到未授权接口再进行测试，发现以下未授权漏洞
 
 ## 未授权敏感信息泄露
@@ -167,11 +167,11 @@ private boolean isIgnoreAuth(String requestUri) {
 
 [![](assets/1706771798-7315ebd41e70d5e5bf177cbe7103be03.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129105315-8c6d30ee-be51-1.png)
 
-但是能够直接读取.rebuild中的环境变量
+但是能够直接读取.rebuild 中的环境变量
 
 [![](assets/1706771798-1451ed27ca4c1d9bbfa394bf2ae9cc04.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129105324-921099dc-be51-1.png)
 
-其中数据库密码由aes加密，当开发者未指定配置aeskey时
+其中数据库密码由 aes 加密，当开发者未指定配置 aeskey 时
 
 com.rebuild.utils.AES#getPassKey使用默认key：REBUILD2018
 
@@ -187,7 +187,7 @@ com.rebuild.utils.AES#getPassKey使用默认key：REBUILD2018
 
 也就是未授权限制性文件读取->未授权的敏感信息获取
 
-## 未授权sql注入
+## 未授权 sql 注入
 
 ### 代码分析
 
@@ -203,13 +203,13 @@ public RespBody delShareFile(@IdParam ID shortId) {
 
 #### 存在限制条件
 
-将payload分为三部分
+将 payload 分为三部分
 
-1：实体id3位，需要为int类型且真实存在才不会走到异常（这里可以使用爆破001-999）即可探测  
-2：-符号1位  
-3：字符串16位，因为限制了整个payload为20位，所以可以操作的字符串只有16位
+1：实体 id3 位，需要为 int 类型且真实存在才不会走到异常（这里可以使用爆破 001-999）即可探测  
+2：-符号 1 位  
+3：字符串 16 位，因为限制了整个 payload 为 20 位，所以可以操作的字符串只有 16 位
 
-其中2,3部分的限制逻辑在：cn.devezhao.persist4j.engine.ID#isId
+其中 2,3 部分的限制逻辑在：cn.devezhao.persist4j.engine.ID#isId
 
 ```plain
 public static boolean isId(Object id) {  
@@ -223,9 +223,9 @@ public static boolean isId(Object id) {
     }
 ```
 
-idLength默认为20
+idLength 默认为 20
 
-1部分的限制逻辑有两处
+1 部分的限制逻辑有两处
 
 第一处在：cn.devezhao.persist4j.engine.ID#valueOf
 
@@ -239,7 +239,7 @@ public static ID valueOf(String id) {
     }
 ```
 
-限制了id类型
+限制了 id 类型
 
 第二处在：com.rebuild.core.service.CommonsService#tryIfHasPrivileges
 
@@ -265,11 +265,11 @@ private void tryIfHasPrivileges(Object idOrRecord) throws PrivilegesException {
     }
 ```
 
-getEntityCode就是获取前三位实体id
+getEntityCode 就是获取前三位实体 id
 
 [![](assets/1706771798-5ec3ef2993a4ed173ebdd6224073286b.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129105358-a672e966-be51-1.png)
 
-然后步入com.rebuild.core.metadata.MetadataHelper#getEntity(int)
+然后步入 com.rebuild.core.metadata.MetadataHelper#getEntity(int)
 
 ```plain
 public static Entity getEntity(int entityCode) throws MissingMetaExcetion {  
@@ -283,11 +283,11 @@ public static Entity getEntity(int entityCode) throws MissingMetaExcetion {
 
 如果实体不存在就会走入异常
 
-在运行过程中其实在存在很多实体，所以使用低位实体id都是可以成功
+在运行过程中其实在存在很多实体，所以使用低位实体 id 都是可以成功
 
 [![](assets/1706771798-5f7a235acd6634f6a9ea8b8d7a3277fe.png)](https://xzfile.aliyuncs.com/media/upload/picture/20240129105406-aad70afa-be51-1.png)
 
-根据以上代码分析结果，虽然存在长度限制，但是因为是delete操作，依旧可以用恶意payload导致拒绝服务
+根据以上代码分析结果，虽然存在长度限制，但是因为是 delete 操作，依旧可以用恶意 payload 导致拒绝服务
 
 -   id=001-aaaaaaaa'or+1=1%23
 
